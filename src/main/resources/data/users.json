@@ -1,0 +1,16 @@
+[
+    {
+        "login": "admin@build.kydas.ru",
+        "password": "{password}",
+        "role": "ADMIN",
+        "position": "Администратор",
+        "name": "Тестовый администратор"
+    },
+    {
+        "login": "user@build.kydas.ru",
+        "password": "{password}",
+        "role": "USER",
+        "position": "Тестовая должность",
+        "name": "Тестовый пользователь"
+    }
+]

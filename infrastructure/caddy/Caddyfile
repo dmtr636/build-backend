@@ -1,0 +1,52 @@
+api.dev.build.kydas.ru {
+    reverse_proxy app:8080 {
+        header_up Host {host}
+        header_up X-Forwarded-For {remote}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-Proto {scheme}
+
+        lb_retries 60
+        lb_try_interval 1s
+        lb_try_duration 60s
+    }
+
+    reverse_proxy /api/events/ws* app:8080 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+
+        lb_retries 60
+        lb_try_interval 1s
+        lb_try_duration 60s
+    }
+
+    handle /cdn/files/* {
+        root * /srv
+        file_server
+
+        # Cache 30 days
+        header Cache-Control "public, max-age=2592000, immutable"
+
+        header Access-Control-Allow-Origin "*"
+        header Access-Control-Allow-Methods "GET, OPTIONS"
+        header Access-Control-Allow-Headers "Content-Type"
+    }
+
+    encode zstd gzip
+}
+
+dev.build.kydas.ru {
+    root * /srv/cdn/frontend-dev/admin/dist
+    file_server
+
+    @assets path /assets/*
+    header @assets Cache-Control "public, max-age=2592000, immutable"
+
+    route {
+        try_files {path} /index.html
+        header /index.html Cache-Control "public, max-age=0, must-revalidate"
+    }
+
+    encode zstd gzip
+}
