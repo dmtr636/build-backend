@@ -80,7 +80,7 @@ public class SecurityTestUtils {
     }
 
     private User getUserByLogin(String login) {
-        return userRepository.findByEmail(login).orElseThrow(() ->
+        return userRepository.findByLogin(login).orElseThrow(() ->
             new AssertionError("User not found")
         );
     }

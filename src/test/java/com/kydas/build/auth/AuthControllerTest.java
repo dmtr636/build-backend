@@ -52,7 +52,7 @@ class AuthControllerTest {
             () -> assertThat(userDTO).isNotNull()
         );
 
-        assertThat(userDTO.getEmail()).isEqualTo(ROOT_USER_EMAIL);
+        assertThat(userDTO.getLogin()).isEqualTo(ROOT_USER_EMAIL);
     }
 
     @Test

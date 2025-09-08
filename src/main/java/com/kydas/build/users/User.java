@@ -52,6 +52,27 @@ public class User extends BaseEntity {
     private String name;
 
     @Nullable
+    private String lastName;
+
+    @Nullable
+    private String firstName;
+
+    @Nullable
+    private String patronymic;
+
+    @Nullable
+    private String messenger;
+
+    @Nullable
+    private String email;
+
+    @Nullable
+    private String workPhone;
+
+    @Nullable
+    private String personalPhone;
+
+    @Nullable
     private String imageId;
 
     @CreationTimestamp
