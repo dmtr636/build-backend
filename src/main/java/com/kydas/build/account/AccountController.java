@@ -77,6 +77,11 @@ public class AccountController {
         }
         user = userMapper.update(user, userDTO);
         user = userService.save(user);
+        eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
+            .setType(EventWebSocketDTO.Type.UPDATE)
+            .setObjectName("user")
+            .setData(userMapper.toDTO(user))
+        );
         eventWebSocketController.notifyObjectChange(user, new EventWebSocketDTO()
             .setType(EventWebSocketDTO.Type.UPDATE)
             .setObjectName("user")
