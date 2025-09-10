@@ -76,7 +76,7 @@ public class UserService extends BaseService<User, UserDTO> {
         var updatedUser = userRepository.save(user);
         eventService.create(new EventDTO()
             .setUserId(securityContext.getCurrentUser().getId())
-            .setAction("create")
+            .setAction("update")
             .setActionType("system")
             .setObjectName("user")
             .setObjectId(String.valueOf(updatedUser.getId()))
