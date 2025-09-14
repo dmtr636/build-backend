@@ -59,6 +59,9 @@ public class UserDTO extends BaseDTO {
     @Nullable
     private String imageId;
 
+    @Nullable
+    private String organizationId;
+
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createDate;
 
@@ -67,4 +70,3 @@ public class UserDTO extends BaseDTO {
 
     private Map<String, Object> info = Map.of();
 }
-
