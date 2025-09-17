@@ -3,6 +3,7 @@ package com.kydas.build.organizations;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kydas.build.core.crud.BaseDTO;
 import com.kydas.build.core.utils.DateUtils;
+import com.kydas.build.users.UserDTO;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class OrganizationDTO extends BaseDTO {
     private String name;
 
     @Nullable
-    private List<String> employeeIds;
+    private List<UserDTO> employees;
 
     @Nullable
     private String imageId;
