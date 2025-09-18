@@ -1,7 +1,6 @@
 package com.kydas.build.organizations;
 
 import com.kydas.build.core.crud.BaseRepository;
-import com.kydas.build.core.exceptions.classes.NotFoundException;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
 
@@ -17,8 +16,4 @@ public interface OrganizationRepository extends BaseRepository<Organization> {
 
     @EntityGraph(attributePaths = "employees")
     List<Organization> findAll();
-
-    default Organization findByIdOrElseThrow(UUID id) throws NotFoundException {
-        return findById(id).orElseThrow(NotFoundException::new);
-    }
 }
