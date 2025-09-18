@@ -1,16 +1,17 @@
 package com.kydas.build.users;
 
 import com.kydas.build.core.crud.BaseService;
+import com.kydas.build.core.email.EmailService;
 import com.kydas.build.core.exceptions.classes.AlreadyExistsException;
 import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.core.exceptions.classes.NotFoundException;
 import com.kydas.build.core.security.SecurityContext;
+import com.kydas.build.core.utils.PasswordUtils;
 import com.kydas.build.events.EventDTO;
 import com.kydas.build.events.EventService;
 import com.kydas.build.events.EventWebSocketController;
 import com.kydas.build.events.EventWebSocketDTO;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +19,29 @@ import java.util.UUID;
 
 @Service
 public class UserService extends BaseService<User, UserDTO> {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private SecurityContext securityContext;
-    @Autowired
-    private EventService eventService;
-    @Autowired
-    private EventWebSocketController eventWebSocketController;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final SecurityContext securityContext;
+    private final EventService eventService;
+    private final EventWebSocketController eventWebSocketController;
+    private final EmailService emailService;
 
-    public UserService() {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       UserMapper userMapper,
+                       SecurityContext securityContext,
+                       EventService eventService,
+                       EventWebSocketController eventWebSocketController,
+                       EmailService emailService) {
         super(User.class);
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
+        this.securityContext = securityContext;
+        this.eventService = eventService;
+        this.eventWebSocketController = eventWebSocketController;
+        this.emailService = emailService;
     }
 
     @Override
@@ -44,7 +53,22 @@ public class UserService extends BaseService<User, UserDTO> {
         user = userMapper.update(user, userDTO);
         var password = userDTO.getPassword();
         if (password == null) {
-            password = UUID.randomUUID().toString();
+            password = PasswordUtils.generate(12);
+            emailService.sendEmail(
+                    userDTO.getEmail(),
+                    "Ваш аккаунт на build.kydas.ru создан",
+                    String.format("""
+                            Здравствуйте!
+                            
+                            Ваш аккаунт был создан на платформе build.kydas.ru.
+                            Ваш пароль: %s
+                            
+                            Ссылка для входа: https://dev.build.kydas.ru/
+                            
+                            С уважением,
+                            команда Kydas
+                            """, password)
+            );
         }
         user.setPassword(passwordEncoder.encode(password));
         return user;
@@ -55,16 +79,16 @@ public class UserService extends BaseService<User, UserDTO> {
         var user = makeEntity(userDTO);
         var createdUser = userRepository.save(user);
         eventService.create(new EventDTO()
-            .setUserId(securityContext.getCurrentUser().getId())
-            .setAction("create")
-            .setActionType("system")
-            .setObjectName("user")
-            .setObjectId(String.valueOf(createdUser.getId()))
+                .setUserId(securityContext.getCurrentUser().getId())
+                .setAction("create")
+                .setActionType("system")
+                .setObjectName("user")
+                .setObjectId(String.valueOf(createdUser.getId()))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
-            .setType(EventWebSocketDTO.Type.CREATE)
-            .setObjectName("user")
-            .setData(userMapper.toDTO(createdUser))
+                .setType(EventWebSocketDTO.Type.CREATE)
+                .setObjectName("user")
+                .setData(userMapper.toDTO(createdUser))
         );
         return createdUser;
     }
@@ -75,16 +99,16 @@ public class UserService extends BaseService<User, UserDTO> {
         userMapper.update(user, userDTO);
         var updatedUser = userRepository.save(user);
         eventService.create(new EventDTO()
-            .setUserId(securityContext.getCurrentUser().getId())
-            .setAction("update")
-            .setActionType("system")
-            .setObjectName("user")
-            .setObjectId(String.valueOf(updatedUser.getId()))
+                .setUserId(securityContext.getCurrentUser().getId())
+                .setAction("update")
+                .setActionType("system")
+                .setObjectName("user")
+                .setObjectId(String.valueOf(updatedUser.getId()))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
-            .setType(EventWebSocketDTO.Type.UPDATE)
-            .setObjectName("user")
-            .setData(userMapper.toDTO(updatedUser))
+                .setType(EventWebSocketDTO.Type.UPDATE)
+                .setObjectName("user")
+                .setData(userMapper.toDTO(updatedUser))
         );
         return updatedUser;
     }
@@ -94,16 +118,16 @@ public class UserService extends BaseService<User, UserDTO> {
     public void delete(UUID id) throws ApiException {
         var user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         eventService.create(new EventDTO()
-            .setUserId(securityContext.getCurrentUser().getId())
-            .setAction("delete")
-            .setActionType("system")
-            .setObjectName("user")
-            .setObjectId(String.valueOf(id))
+                .setUserId(securityContext.getCurrentUser().getId())
+                .setAction("delete")
+                .setActionType("system")
+                .setObjectName("user")
+                .setObjectId(String.valueOf(id))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
-            .setType(EventWebSocketDTO.Type.DELETE)
-            .setObjectName("user")
-            .setData(userMapper.toDTO(user))
+                .setType(EventWebSocketDTO.Type.DELETE)
+                .setObjectName("user")
+                .setData(userMapper.toDTO(user))
         );
         userRepository.delete(user);
     }
