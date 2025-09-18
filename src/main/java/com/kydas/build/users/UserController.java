@@ -34,7 +34,7 @@ public class UserController extends BaseController<User, UserDTO> {
         return storage.userStatus;
     }
 
-    @PutMapping("/{id}/status/{status}")
+    @RequestMapping(value = "/{id}/status/{status}", method = {RequestMethod.PUT, RequestMethod.POST})
     @Operation(summary = "Обновление статуса пользователя")
     public OkResponse updateStatus(@PathVariable UUID id, @PathVariable String status) {
         var map = Map.of(
