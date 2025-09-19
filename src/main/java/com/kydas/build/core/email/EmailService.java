@@ -42,5 +42,4 @@ public class EmailService {
         };
         emailSender.send(mailMessage);
     }
-
 }
