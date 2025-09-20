@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -20,7 +20,10 @@ public class FileDTO {
     private String type;
 
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT)
-    private OffsetDateTime createDate;
+    private Instant createdAt;
+
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
+    private Instant updatedAt;
 
     public FileDTO(File file) {
         this.id = file.getId();
@@ -28,6 +31,7 @@ public class FileDTO {
         this.originalFileName = file.getOriginalFileName();
         this.size = file.getSize();
         this.type = file.getType();
-        this.createDate = file.getCreateDate();
+        this.createdAt = file.getCreatedAt();
+        this.updatedAt = file.getUpdatedAt();
     }
 }

@@ -1,7 +1,6 @@
 package com.kydas.build.core.crud;
 
 import com.kydas.build.core.exceptions.classes.ApiException;
-import com.kydas.build.core.filter.FilterDTO;
 import com.kydas.build.core.filter.FilterV2Request;
 import com.kydas.build.core.response.OkResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

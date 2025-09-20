@@ -3,7 +3,7 @@ package com.kydas.build.events;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kydas.build.core.crud.BaseDTO;
 import com.kydas.build.core.utils.DateUtils;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class EventDTO extends BaseDTO {
     private String objectId;
 
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
-    private Instant date;
+    private Instant createdAt;
 
     private Map<String, Object> info = Map.of();
 }

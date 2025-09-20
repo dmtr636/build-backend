@@ -1,8 +1,13 @@
 package com.kydas.build.core.crud;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -11,9 +16,14 @@ import java.util.UUID;
 @MappedSuperclass
 public abstract class BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false)
+    @Column(nullable = false, unique = true, updatable = false)
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
+
+    @Version
+    @Column(nullable = false)
+    private int version;
 
     public String getEntityName() {
         return this.getClass().getSimpleName();
