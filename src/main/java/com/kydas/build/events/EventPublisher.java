@@ -4,6 +4,8 @@ import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.core.security.SecurityContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class EventPublisher {
 
@@ -19,7 +21,7 @@ public class EventPublisher {
         this.securityContext = securityContext;
     }
 
-    public void publish(String objectName, EventWebSocketDTO.Type type, Object data) throws ApiException {
+    public void publish(String objectName, EventWebSocketDTO.Type type, Object data, Map<String, Object> info) throws ApiException {
         var userId = securityContext.getCurrentUser().getId();
         eventService.create(new EventDTO()
                 .setUserId(userId)
@@ -27,6 +29,7 @@ public class EventPublisher {
                 .setActionType("system")
                 .setObjectName(objectName)
                 .setObjectId(extractId(data))
+                .setInfo(info)
         );
         webSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(type)

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -43,7 +44,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     public Organization create(OrganizationDTO organizationDTO) throws ApiException {
         var organization = makeEntity(organizationDTO);
         var saved = organizationRepository.save(organization);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.CREATE, organizationMapper.toDTO(saved));
+        eventPublisher.publish("organization", EventWebSocketDTO.Type.CREATE, organizationMapper.toDTO(saved), Map.of("name", saved.getName()));
         return saved;
     }
 
@@ -52,7 +53,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
         var organization = organizationRepository.findByIdOrElseThrow(organizationDTO.getId());
         organizationMapper.update(organization, organizationDTO);
         var updated = organizationRepository.save(organization);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.UPDATE, organizationMapper.toDTO(updated));
+        eventPublisher.publish("organization", EventWebSocketDTO.Type.UPDATE, organizationMapper.toDTO(updated), Map.of("name", updated.getName()));
         return updated;
     }
 
@@ -60,7 +61,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     @Override
     public void delete(UUID id) throws ApiException {
         var organization = organizationRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.DELETE, organizationMapper.toDTO(organization));
+        eventPublisher.publish("organization", EventWebSocketDTO.Type.DELETE, organizationMapper.toDTO(organization), Map.of("name", organization.getName()));
         organizationRepository.delete(organization);
     }
 
@@ -80,7 +81,8 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
         eventPublisher.publish(
                 "organization-employees",
                 EventWebSocketDTO.Type.UPDATE,
-                organizationMapper.toDTO(organization)
+                organizationMapper.toDTO(organization),
+                Map.of("name", organization.getName())
         );
     }
 
@@ -98,7 +100,8 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
         eventPublisher.publish(
                 "organization-employees",
                 EventWebSocketDTO.Type.UPDATE,
-                organizationMapper.toDTO(organization))
-        ;
+                organizationMapper.toDTO(organization),
+                Map.of("name", organization.getName())
+        );
     }
 }

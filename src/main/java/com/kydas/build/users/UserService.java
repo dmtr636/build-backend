@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -84,6 +85,7 @@ public class UserService extends BaseService<User, UserDTO> {
                 .setActionType("system")
                 .setObjectName("user")
                 .setObjectId(String.valueOf(createdUser.getId()))
+                .setInfo(Map.of("login", userDTO.getLogin()))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(EventWebSocketDTO.Type.CREATE)
@@ -104,6 +106,7 @@ public class UserService extends BaseService<User, UserDTO> {
                 .setActionType("system")
                 .setObjectName("user")
                 .setObjectId(String.valueOf(updatedUser.getId()))
+                .setInfo(Map.of("login", userDTO.getLogin()))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(EventWebSocketDTO.Type.UPDATE)
@@ -123,6 +126,7 @@ public class UserService extends BaseService<User, UserDTO> {
                 .setActionType("system")
                 .setObjectName("user")
                 .setObjectId(String.valueOf(id))
+                .setInfo(Map.of("login", user.getLogin()))
         );
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(EventWebSocketDTO.Type.DELETE)
