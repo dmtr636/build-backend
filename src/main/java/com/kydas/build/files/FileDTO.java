@@ -19,7 +19,7 @@ public class FileDTO {
     private Long size;
     private String type;
 
-    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT)
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createdAt;
 
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
