@@ -24,7 +24,7 @@ public class Organization extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     private List<User> employees = new ArrayList<>();
 
     private String imageId;
