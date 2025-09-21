@@ -44,7 +44,12 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     public Organization create(OrganizationDTO organizationDTO) throws ApiException {
         var organization = makeEntity(organizationDTO);
         var saved = organizationRepository.save(organization);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.CREATE, organizationMapper.toDTO(saved), Map.of("name", saved.getName()));
+        eventPublisher.publish(
+            "organization",
+            EventWebSocketDTO.Type.CREATE,
+            organizationMapper.toDTO(saved),
+            Map.of("name", saved.getName())
+        );
         return saved;
     }
 
@@ -53,7 +58,12 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
         var organization = organizationRepository.findByIdOrElseThrow(organizationDTO.getId());
         organizationMapper.update(organization, organizationDTO);
         var updated = organizationRepository.save(organization);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.UPDATE, organizationMapper.toDTO(updated), Map.of("name", updated.getName()));
+        eventPublisher.publish(
+            "organization",
+            EventWebSocketDTO.Type.UPDATE,
+            organizationMapper.toDTO(updated),
+            Map.of("name", updated.getName())
+        );
         return updated;
     }
 
@@ -61,7 +71,12 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     @Override
     public void delete(UUID id) throws ApiException {
         var organization = organizationRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("organization", EventWebSocketDTO.Type.DELETE, organizationMapper.toDTO(organization), Map.of("name", organization.getName()));
+        eventPublisher.publish(
+            "organization",
+            EventWebSocketDTO.Type.DELETE,
+            organizationMapper.toDTO(organization),
+            Map.of("name", organization.getName())
+        );
         organizationRepository.delete(organization);
     }
 

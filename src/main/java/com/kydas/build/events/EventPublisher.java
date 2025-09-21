@@ -22,15 +22,17 @@ public class EventPublisher {
     }
 
     public void publish(String objectName, EventWebSocketDTO.Type type, Object data, Map<String, Object> info) throws ApiException {
-        var userId = securityContext.getCurrentUser().getId();
-        eventService.create(new EventDTO()
+        if (securityContext.isAuthenticated()) {
+            var userId = securityContext.getCurrentUser().getId();
+            eventService.create(new EventDTO()
                 .setUserId(userId)
                 .setAction(type.name().toLowerCase())
                 .setActionType("system")
                 .setObjectName(objectName)
                 .setObjectId(extractId(data))
                 .setInfo(info)
-        );
+            );
+        }
         webSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(type)
                 .setObjectName(objectName)

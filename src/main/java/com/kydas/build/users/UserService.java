@@ -79,14 +79,16 @@ public class UserService extends BaseService<User, UserDTO> {
     public User create(UserDTO userDTO) throws ApiException {
         var user = makeEntity(userDTO);
         var createdUser = userRepository.save(user);
-        eventService.create(new EventDTO()
+        if (securityContext.isAuthenticated()) {
+            eventService.create(new EventDTO()
                 .setUserId(securityContext.getCurrentUser().getId())
                 .setAction("create")
                 .setActionType("system")
                 .setObjectName("user")
                 .setObjectId(String.valueOf(createdUser.getId()))
                 .setInfo(Map.of("login", userDTO.getLogin()))
-        );
+            );
+        }
         eventWebSocketController.notifyObjectChange(new EventWebSocketDTO()
                 .setType(EventWebSocketDTO.Type.CREATE)
                 .setObjectName("user")
