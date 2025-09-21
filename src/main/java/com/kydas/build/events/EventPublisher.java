@@ -21,6 +21,24 @@ public class EventPublisher {
         this.securityContext = securityContext;
     }
 
+    public void publish(String objectName, EventWebSocketDTO.Type type, Object data) throws ApiException {
+        if (securityContext.isAuthenticated()) {
+            var userId = securityContext.getCurrentUser().getId();
+            eventService.create(new EventDTO()
+                .setUserId(userId)
+                .setAction(type.name().toLowerCase())
+                .setActionType("system")
+                .setObjectName(objectName)
+                .setObjectId(extractId(data))
+            );
+        }
+        webSocketController.notifyObjectChange(new EventWebSocketDTO()
+            .setType(type)
+            .setObjectName(objectName)
+            .setData(data)
+        );
+    }
+
     public void publish(String objectName, EventWebSocketDTO.Type type, Object data, Map<String, Object> info) throws ApiException {
         if (securityContext.isAuthenticated()) {
             var userId = securityContext.getCurrentUser().getId();
