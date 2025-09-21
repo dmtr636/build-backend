@@ -1,2 +1,2 @@
-docker-compose down -v --rmi all
-docker system prune -a
+sudo docker-compose down -v --rmi all
+sudo docker system prune -a

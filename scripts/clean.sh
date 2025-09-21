@@ -1,1 +1,1 @@
-docker system prune
+sudo docker system prune

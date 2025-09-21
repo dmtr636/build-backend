@@ -1,2 +1,2 @@
 git pull
-docker compose up app -d --build
+sudo docker compose up app -d --build
