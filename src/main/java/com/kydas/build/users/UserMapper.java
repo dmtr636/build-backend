@@ -22,6 +22,7 @@ public interface UserMapper extends BaseMapper<User, UserDTO> {
     @Override
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "organization", source = "organizationId", qualifiedByName = "mapOrganizationIdToEntity")
+    @Mapping(target = "version", ignore = true)
     User update(@MappingTarget User entity, UserDTO userDTO);
 
     @Named("mapOrganizationIdToEntity")

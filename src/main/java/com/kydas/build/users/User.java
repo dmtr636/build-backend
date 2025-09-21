@@ -2,11 +2,9 @@ package com.kydas.build.users;
 
 import com.kydas.build.core.crud.BaseEntity;
 import com.kydas.build.organizations.Organization;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,18 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Entity
-@Table(
-        name = "users",
-        indexes = {
-                @Index(name = "users_idx_login", columnList = "login", unique = true),
-                @Index(name = "users_idx_role", columnList = "role"),
-                @Index(name = "users_idx_position", columnList = "position"),
-                @Index(name = "users_idx_name", columnList = "name"),
-                @Index(name = "users_idx_enabled", columnList = "enabled"),
-                @Index(name = "users_idx_createDate", columnList = "createDate"),
-                @Index(name = "users_idx_updateDate", columnList = "updateDate"),
-        }
-)
+@Table(name = "users")
 public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String login;
@@ -48,34 +35,24 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean enabled;
 
-    @Nullable
     private String position;
 
-    @Nullable
     private String name;
 
-    @Nullable
     private String lastName;
 
-    @Nullable
     private String firstName;
 
-    @Nullable
     private String patronymic;
 
-    @Nullable
     private String messenger;
 
-    @Nullable
     private String email;
 
-    @Nullable
     private String workPhone;
 
-    @Nullable
     private String personalPhone;
 
-    @Nullable
     private String imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -83,12 +60,15 @@ public class User extends BaseEntity {
     private Organization organization;
 
     @CreationTimestamp
-    private Instant createDate;
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
 
     @UpdateTimestamp
-    private Instant updateDate;
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Map<String, Object> info;
 
     public enum Role {

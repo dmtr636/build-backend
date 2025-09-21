@@ -18,5 +18,6 @@ public interface OrganizationMapper extends BaseMapper<Organization, Organizatio
 
     @Override
     @Mapping(target = "employees", ignore = true)
+    @Mapping(target = "version", ignore = true)
     Organization update(@MappingTarget Organization entity, OrganizationDTO dto);
 }

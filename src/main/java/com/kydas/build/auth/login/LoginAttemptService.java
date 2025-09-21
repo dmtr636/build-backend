@@ -7,10 +7,9 @@ import com.kydas.build.core.utils.RequestUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Service
@@ -18,22 +17,22 @@ import java.time.temporal.ChronoUnit;
 public class LoginAttemptService {
     private final LoginAttemptRepository loginAttemptRepository;
 
-    public final static int INITIAL_ATTEMPTS = 6;
-    public final static int ATTEMPTS_AFTER_BAN = 3;
-    public final static int SHORT_BAN_DURATION_SECONDS = 300;
-    public final static int LONG_BAN_DURATION_SECONDS = 3600;
+    public static final int INITIAL_ATTEMPTS = 6;
+    public static final int ATTEMPTS_AFTER_BAN = 3;
+    public static final int SHORT_BAN_DURATION_SECONDS = 300;
+    public static final int LONG_BAN_DURATION_SECONDS = 3600;
 
     public LoginAttempt getOrCreateLoginAttempt(HttpServletRequest request) {
         var ipAddress = RequestUtils.getIpAddress(request);
         var loginAttempt = loginAttemptRepository.findByIp(ipAddress).orElseGet(() ->
-            new LoginAttempt(ipAddress)
+                new LoginAttempt(ipAddress)
         );
         checkLastLogin(loginAttempt);
-        loginAttempt.setLastLoginAttempt(LocalDateTime.now());
+        loginAttempt.setLastLoginAttempt(Instant.now());
         return loginAttemptRepository.save(loginAttempt);
     }
 
-    public void handleSuccessfulAttempt(LoginAttempt loginAttempt) throws ServletException {
+    public void handleSuccessfulAttempt(LoginAttempt loginAttempt) {
         loginAttemptRepository.delete(loginAttempt);
     }
 
@@ -56,7 +55,7 @@ public class LoginAttemptService {
     }
 
     private void checkLastLogin(LoginAttempt loginAttempt) {
-        var now = LocalDateTime.now();
+        var now = Instant.now();
         var secondsSinceLastLogin = ChronoUnit.SECONDS.between(loginAttempt.getLastLoginAttempt(), now);
 
         if (secondsSinceLastLogin >= SHORT_BAN_DURATION_SECONDS) {
@@ -70,7 +69,7 @@ public class LoginAttemptService {
 
     private boolean isBanned(LoginAttempt loginAttempt) {
         var banExpirationTime = loginAttempt.getBanExpirationTime();
-        return banExpirationTime != null && banExpirationTime.isAfter(LocalDateTime.now());
+        return banExpirationTime != null && banExpirationTime.isAfter(Instant.now());
     }
 
     private void incrementAttempts(LoginAttempt loginAttempt) {
@@ -82,9 +81,9 @@ public class LoginAttemptService {
     private void setBan(LoginAttempt loginAttempt) {
         var attempts = loginAttempt.getAttempts();
         if (attempts == INITIAL_ATTEMPTS) {
-            loginAttempt.setBanExpirationTime(LocalDateTime.now().plusSeconds(SHORT_BAN_DURATION_SECONDS));
+            loginAttempt.setBanExpirationTime(Instant.now().plusSeconds(SHORT_BAN_DURATION_SECONDS));
         } else if (attempts != ATTEMPTS_AFTER_BAN && attempts % ATTEMPTS_AFTER_BAN == 0) {
-            loginAttempt.setBanExpirationTime(LocalDateTime.now().plusSeconds(LONG_BAN_DURATION_SECONDS));
+            loginAttempt.setBanExpirationTime(Instant.now().plusSeconds(LONG_BAN_DURATION_SECONDS));
         }
         loginAttemptRepository.save(loginAttempt);
     }
@@ -103,7 +102,7 @@ public class LoginAttemptService {
     private int getBanDurationSeconds(LoginAttempt loginAttempt) {
         var banExpirationTime = loginAttempt.getBanExpirationTime();
         if (banExpirationTime != null) {
-            var remainingSeconds = (ChronoUnit.MILLIS.between(LocalDateTime.now(), banExpirationTime) / 1000.0);
+            var remainingSeconds = (ChronoUnit.MILLIS.between(Instant.now(), banExpirationTime) / 1000.0);
             return (int) Math.max(0, Math.round(remainingSeconds));
         }
         return 0;

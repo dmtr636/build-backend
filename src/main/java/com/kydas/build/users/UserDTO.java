@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kydas.build.core.crud.BaseDTO;
 import com.kydas.build.core.utils.DateUtils;
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -63,10 +63,10 @@ public class UserDTO extends BaseDTO {
     private String organizationId;
 
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
-    private Instant createDate;
+    private Instant createdAt;
 
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
-    private Instant updateDate;
+    private Instant updatedAt;
 
     private Map<String, Object> info = Map.of();
 }
