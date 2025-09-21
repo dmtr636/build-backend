@@ -45,7 +45,9 @@ public class UserDataLoader {
     private void createRootUser() throws ApiException {
         userService.create(new UserDTO()
             .setLogin(rootUserEmail)
+            .setEmail(rootUserEmail)
             .setPassword(rootUserPassword)
-            .setRole(User.Role.ROOT));
+            .setRole(User.Role.ROOT)
+        );
     }
 }
