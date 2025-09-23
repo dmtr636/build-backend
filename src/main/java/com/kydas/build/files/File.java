@@ -1,6 +1,10 @@
 package com.kydas.build.files;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,7 +41,8 @@ public class File {
     private Instant updatedAt;
 
     public enum Type {
-        PROFILE_IMAGE, PROJECT_COVER_IMAGE, PROJECT_CONTENT_IMAGE, PROJECT_CONTENT_VIDEO, REPORT_ATTACHMENT_IMAGE, REVIEW_IMAGE
+        PROFILE_IMAGE, PROJECT_COVER_IMAGE, PROJECT_CONTENT_IMAGE, PROJECT_CONTENT_VIDEO, REPORT_ATTACHMENT_IMAGE,
+        REVIEW_IMAGE, PROJECT_GALLERY_IMAGE, PROJECT_DOCUMENT
     }
 
     @Version
