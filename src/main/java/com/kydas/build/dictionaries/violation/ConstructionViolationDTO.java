@@ -13,7 +13,7 @@ import org.springframework.lang.Nullable;
 @Setter
 @Accessors(chain = true)
 public class ConstructionViolationDTO extends BaseDTO {
-    @Nullable
+    @NotBlank
     private String category;
 
     @NotBlank
@@ -25,7 +25,7 @@ public class ConstructionViolationDTO extends BaseDTO {
     @NotBlank
     private String name;
 
-    @NotNull
+    @Nullable
     @Positive
     private Integer remediationDueDays;
 }
