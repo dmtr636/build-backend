@@ -9,6 +9,7 @@ public class Endpoints {
     public static final String FILES_ENDPOINT = "/api/files";
     public static final String CONSTRUCTION_VIOLATIONS_ENDPOINT = "/api/dictionaries/construction-violations";
     public static final String CONSTRUCTION_WORKS_ENDPOINT = "/api/dictionaries/construction-works";
+    public static final String CONSTRUCTION_WORK_STAGES_ENDPOINT = "/api/dictionaries/construction-works/stages";
     public static final String NORMATIVE_DOCUMENTS_ENDPOINT = "/api/dictionaries/normative-documents";
     public static final String PROJECTS_ENDPOINT = "/api/projects";
 }
