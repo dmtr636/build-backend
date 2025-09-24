@@ -7,9 +7,15 @@ public class Endpoints {
     public static final String ACCOUNT_ENDPOINT = "/api/account";
     public static final String AUTH_ENDPOINT = "/api/auth";
     public static final String FILES_ENDPOINT = "/api/files";
-    public static final String CONSTRUCTION_VIOLATIONS_ENDPOINT = "/api/dictionaries/construction-violations";
-    public static final String CONSTRUCTION_WORKS_ENDPOINT = "/api/dictionaries/construction-works";
-    public static final String CONSTRUCTION_WORK_STAGES_ENDPOINT = "/api/dictionaries/construction-works/stages";
-    public static final String NORMATIVE_DOCUMENTS_ENDPOINT = "/api/dictionaries/normative-documents";
-    public static final String PROJECTS_ENDPOINT = "/api/projects";
+
+    public static final String DICTIONARIES = "/api/dictionaries";
+    public static final String CONSTRUCTION_VIOLATIONS = DICTIONARIES + "/construction-violations";
+    public static final String CONSTRUCTION_WORKS = DICTIONARIES + "/construction-works";
+    public static final String NORMATIVE_DOCUMENTS = DICTIONARIES + "/normative-documents";
+    public static final String CONSTRUCTION_WORK_STAGES = CONSTRUCTION_WORKS + "/stages";
+
+    public static final String PROJECTS = "/api/projects";
+    public static final String PROJECTS_WORKS = PROJECTS + "/works";
+    public static final String PROJECTS_WORKS_COMMENTS = PROJECTS_WORKS + "/comments";
+
 }

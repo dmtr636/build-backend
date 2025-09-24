@@ -1,4 +1,4 @@
-package com.kydas.build.projects;
+package com.kydas.build.projects.services;
 
 import com.kydas.build.files.FileRepository;
 import com.kydas.build.projects.dto.ProjectDTO;

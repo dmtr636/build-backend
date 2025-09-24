@@ -1,4 +1,4 @@
-package com.kydas.build.projects;
+package com.kydas.build.projects.repositories;
 
 import com.kydas.build.core.crud.BaseRepository;
 import com.kydas.build.projects.entities.Project;

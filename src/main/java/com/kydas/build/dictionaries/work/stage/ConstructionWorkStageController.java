@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Endpoints.CONSTRUCTION_WORK_STAGES_ENDPOINT)
+@RequestMapping(Endpoints.CONSTRUCTION_WORK_STAGES)
 @Tag(name = "Сервис перечня этапов работ")
 public class ConstructionWorkStageController extends BaseController<ConstructionWorkStage, ConstructionWorkStageDTO> {
 

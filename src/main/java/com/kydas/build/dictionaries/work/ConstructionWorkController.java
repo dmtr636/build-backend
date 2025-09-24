@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(Endpoints.CONSTRUCTION_WORKS_ENDPOINT)
+@RequestMapping(Endpoints.CONSTRUCTION_WORKS)
 @Tag(name = "Сервис перечня работ")
 public class ConstructionWorkController extends BaseController<ConstructionWork, ConstructionWorkDTO> {
 }
