@@ -1,9 +1,10 @@
-package com.kydas.build.projects;
+package com.kydas.build.projects.services;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
+import com.kydas.build.projects.repositories.ProjectRepository;
 import com.kydas.build.projects.dto.ProjectDTO;
 import com.kydas.build.projects.entities.Project;
 import com.kydas.build.projects.mappers.ProjectMapper;

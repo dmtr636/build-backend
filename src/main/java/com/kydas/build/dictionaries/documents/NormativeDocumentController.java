@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(Endpoints.NORMATIVE_DOCUMENTS_ENDPOINT)
+@RequestMapping(Endpoints.NORMATIVE_DOCUMENTS)
 @Tag(name = "Сервис перечня нарушений")
 public class NormativeDocumentController extends BaseController<NormativeDocument, NormativeDocumentDTO> {
 }

@@ -1,4 +1,4 @@
-package com.kydas.build.projects;
+package com.kydas.build.projects.controllers;
 
 import com.kydas.build.core.crud.BaseController;
 import com.kydas.build.core.endpoints.Endpoints;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(Endpoints.PROJECTS_ENDPOINT)
+@RequestMapping(Endpoints.PROJECTS)
 @Tag(name = "Сервис строительных объектов")
 public class ProjectController extends BaseController<Project, ProjectDTO> {
 }

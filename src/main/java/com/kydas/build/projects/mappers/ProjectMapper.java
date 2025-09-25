@@ -27,6 +27,7 @@ public interface ProjectMapper extends BaseMapper<Project, ProjectDTO> {
     @Mapping(target = "projectUsers", ignore = true)
     @Mapping(target = "gallery", ignore = true)
     @Mapping(target = "documents", ignore = true)
+    @Mapping(target = "works", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

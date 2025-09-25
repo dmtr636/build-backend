@@ -23,6 +23,7 @@ import java.util.UUID;
 public class ProjectDTO {
     private UUID id;
     private String name;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String objectNumber;
     private AddressDTO address;
     private CoordinateDTO centroid;
