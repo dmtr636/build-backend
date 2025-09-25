@@ -24,6 +24,8 @@ public class ProjectDocument extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "file_id", nullable = false)
     private File file;

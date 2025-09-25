@@ -89,14 +89,23 @@ public class ProjectRelationsUpdater {
         syncCollection(
                 project.getDocuments(),
                 docDTOs,
-                ProjectDocumentDTO::getFileId,
+                dto -> dto.getFile() != null ? dto.getFile().getId() : null,
                 doc -> doc.getFile().getId(),
-                (entity, dto) -> entity.setDocumentGroup(dto.getDocumentGroup()),
+                (entity, dto) -> {
+                    entity.setDocumentGroup(dto.getDocumentGroup());
+                    entity.setName(dto.getName()); // <-- добавить!
+                    if (dto.getFile() != null && dto.getFile().getId() != null) {
+                        entity.setFile(fileRepository.getReferenceById(dto.getFile().getId()));
+                    }
+                },
                 dto -> {
                     var doc = new ProjectDocument();
                     doc.setProject(project);
-                    doc.setFile(fileRepository.getReferenceById(dto.getFileId()));
                     doc.setDocumentGroup(dto.getDocumentGroup());
+                    doc.setName(dto.getName()); // <-- добавить!
+                    if (dto.getFile() != null && dto.getFile().getId() != null) {
+                        doc.setFile(fileRepository.getReferenceById(dto.getFile().getId()));
+                    }
                     return doc;
                 }
         );

@@ -25,12 +25,10 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     private final Random random = new Random();
 
     @Autowired
-    public ProjectService(
-            ProjectRepository projectRepository,
-            ProjectMapper projectMapper,
-            ProjectRelationsUpdater entitySynchronizer,
-            EventPublisher eventPublisher
-    ) {
+    public ProjectService(ProjectRepository projectRepository,
+                          ProjectMapper projectMapper,
+                          ProjectRelationsUpdater entitySynchronizer,
+                          EventPublisher eventPublisher) {
         super(Project.class);
         this.projectRepository = projectRepository;
         this.entitySynchronizer = entitySynchronizer;
