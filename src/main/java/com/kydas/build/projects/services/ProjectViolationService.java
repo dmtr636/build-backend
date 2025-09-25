@@ -51,6 +51,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     @Override
     public ProjectViolation makeEntity(ProjectViolationDTO dto) throws ApiException {
         var violation = violationMapper.update(new ProjectViolation(), dto);
+        violation.setStatus(ProjectViolationStatus.TODO);
         violation.setFiles(getFiles(dto.getFiles()));
         violation.setPhotos(getFiles(dto.getPhotos()));
         violation.setAuthor(securityContext.getCurrentUser());
