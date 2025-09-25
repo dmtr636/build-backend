@@ -68,7 +68,7 @@ public class Project extends BaseEntity {
     @JoinColumn(name = "contractor_organization_id")
     private Organization contractorOrganization;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectUser> projectUsers = new ArrayList<>();
 
     private Instant lastInspection;
