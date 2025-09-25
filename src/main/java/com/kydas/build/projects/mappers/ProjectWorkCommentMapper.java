@@ -1,7 +1,7 @@
 package com.kydas.build.projects.mappers;
 
 import com.kydas.build.core.crud.BaseMapper;
-import com.kydas.build.projects.dto.components.ProjectWorkCommentDTO;
+import com.kydas.build.projects.dto.ProjectWorkCommentDTO;
 import com.kydas.build.projects.entities.ProjectWorkComment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,8 +19,9 @@ public interface ProjectWorkCommentMapper extends BaseMapper<ProjectWorkComment,
     @Override
     @Mapping(target = "work", ignore = true)
     @Mapping(target = "author", ignore = true)
-    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "files", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "version", ignore = true)
     ProjectWorkComment update(@MappingTarget ProjectWorkComment entity, ProjectWorkCommentDTO dto);
 }

@@ -21,44 +21,45 @@ public class EventPublisher {
         this.securityContext = securityContext;
     }
 
-    public void publish(String objectName, EventWebSocketDTO.Type type, Object data) throws ApiException {
+    public void publish(String objectName, EventWebSocketDTO.Type type, ActionType actionType, Object data) throws ApiException {
         if (securityContext.isAuthenticated()) {
             var userId = securityContext.getCurrentUser().getId();
             var event = eventService.create(new EventDTO()
-                .setUserId(userId)
-                .setAction(type.name().toLowerCase())
-                .setActionType("system")
-                .setObjectName(objectName)
-                .setObjectId(extractId(data))
+                    .setUserId(userId)
+                    .setAction(type.name().toLowerCase())
+                    .setActionType(actionType.value())
+                    .setObjectName(objectName)
+                    .setObjectId(extractId(data))
             );
             webSocketController.notifyObjectChange(new EventWebSocketDTO()
-                .setType(EventWebSocketDTO.Type.CREATE)
-                .setObjectName("event")
-                .setData(event)
+                    .setType(EventWebSocketDTO.Type.CREATE)
+                    .setObjectName("event")
+                    .setData(event)
             );
         }
         webSocketController.notifyObjectChange(new EventWebSocketDTO()
-            .setType(type)
-            .setObjectName(objectName)
-            .setData(data)
+                .setType(type)
+                .setObjectName(objectName)
+                .setData(data)
         );
     }
 
-    public void publish(String objectName, EventWebSocketDTO.Type type, Object data, Map<String, Object> info) throws ApiException {
+    public void publish(String objectName, EventWebSocketDTO.Type type, ActionType actionType, Object data,
+                        Map<String, Object> info) throws ApiException {
         if (securityContext.isAuthenticated()) {
             var userId = securityContext.getCurrentUser().getId();
             var event = eventService.create(new EventDTO()
-                .setUserId(userId)
-                .setAction(type.name().toLowerCase())
-                .setActionType("system")
-                .setObjectName(objectName)
-                .setObjectId(extractId(data))
-                .setInfo(info)
+                    .setUserId(userId)
+                    .setAction(type.name().toLowerCase())
+                    .setActionType(actionType.value())
+                    .setObjectName(objectName)
+                    .setObjectId(extractId(data))
+                    .setInfo(info)
             );
             webSocketController.notifyObjectChange(new EventWebSocketDTO()
-                .setType(EventWebSocketDTO.Type.CREATE)
-                .setObjectName("event")
-                .setData(event)
+                    .setType(EventWebSocketDTO.Type.CREATE)
+                    .setObjectName("event")
+                    .setData(event)
             );
         }
         webSocketController.notifyObjectChange(new EventWebSocketDTO()

@@ -17,15 +17,16 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "project_work_comments")
-public class ProjectWorkComment extends BaseComment {
+@Table(name = "project_violation_comments")
+public class ProjectViolationComment extends BaseComment {
+
     @ManyToOne
-    @JoinColumn(name = "work_id", nullable = false)
-    private ProjectWork work;
+    @JoinColumn(name = "violation_id", nullable = false)
+    private ProjectViolation violation;
 
     @OneToMany
     @JoinTable(
-            name = "project_work_comment_files",
+            name = "project_violation_comment_files",
             joinColumns = @JoinColumn(name = "comment_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id")
     )

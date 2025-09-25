@@ -17,5 +17,7 @@ public class Endpoints {
     public static final String PROJECTS = "/api/projects";
     public static final String PROJECTS_WORKS = PROJECTS + "/works";
     public static final String PROJECTS_WORKS_COMMENTS = PROJECTS_WORKS + "/comments";
+    public static final String PROJECTS_VIOLATIONS = PROJECTS + "/violations";
+    public static final String PROJECTS_VIOLATIONS_COMMENTS = PROJECTS_VIOLATIONS + "/comments";
 
 }

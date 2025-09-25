@@ -27,7 +27,7 @@ public class ProjectWorkController extends BaseController<ProjectWork, ProjectWo
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Получение всех работ по проекту")
+    @Operation(summary = "Получение всех работ по объекту")
     public List<ProjectWorkDTO> search(@RequestParam(required = false) UUID projectId) {
         return service.getByProjectId(projectId);
     }

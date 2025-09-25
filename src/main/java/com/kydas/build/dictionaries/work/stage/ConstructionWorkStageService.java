@@ -3,6 +3,7 @@ package com.kydas.build.dictionaries.work.stage;
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.dictionaries.work.ConstructionWork;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import jakarta.transaction.Transactional;
@@ -42,7 +43,7 @@ public class ConstructionWorkStageService extends BaseService<ConstructionWorkSt
     public ConstructionWorkStage create(ConstructionWorkStageDTO dto) throws ApiException {
         var stage = makeEntity(dto);
         var saved = workStageRepository.save(stage);
-        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.CREATE, workStageMapper.toDTO(saved));
+        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.CREATE, ActionType.SYSTEM, workStageMapper.toDTO(saved));
         return saved;
     }
 
@@ -54,7 +55,7 @@ public class ConstructionWorkStageService extends BaseService<ConstructionWorkSt
         work.setId(dto.getWorkId());
         stage.setWork(work);
         var updated = workStageRepository.save(stage);
-        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.UPDATE, workStageMapper.toDTO(updated));
+        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.UPDATE, ActionType.SYSTEM, workStageMapper.toDTO(updated));
         return updated;
     }
 
@@ -62,7 +63,7 @@ public class ConstructionWorkStageService extends BaseService<ConstructionWorkSt
     @Override
     public void delete(UUID id) throws ApiException {
         var constructionWork = workStageRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.DELETE, workStageMapper.toDTO(constructionWork));
+        eventPublisher.publish("construction-work-stage", EventWebSocketDTO.Type.DELETE, ActionType.SYSTEM, workStageMapper.toDTO(constructionWork));
         workStageRepository.delete(constructionWork);
     }
 

@@ -2,6 +2,7 @@ package com.kydas.build.projects.services;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.projects.repositories.ProjectRepository;
@@ -51,7 +52,7 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     public Project create(ProjectDTO dto) throws ApiException {
         var project = makeEntity(dto);
         var saved = projectRepository.save(project);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.CREATE, projectMapper.toDTO(saved));
+        eventPublisher.publish("project", EventWebSocketDTO.Type.CREATE, ActionType.WORK, projectMapper.toDTO(saved));
         return saved;
     }
 
@@ -62,7 +63,7 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
         projectMapper.update(project, dto);
         entitySynchronizer.updateProjectRelations(project, dto);
         var updated = projectRepository.save(project);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.UPDATE, projectMapper.toDTO(updated));
+        eventPublisher.publish("project", EventWebSocketDTO.Type.UPDATE, ActionType.WORK, projectMapper.toDTO(updated));
         return updated;
     }
 
@@ -70,7 +71,7 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     @Override
     public void delete(UUID id) throws ApiException {
         var project = projectRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.DELETE, projectMapper.toDTO(project));
+        eventPublisher.publish("project", EventWebSocketDTO.Type.DELETE, ActionType.WORK, projectMapper.toDTO(project));
         projectRepository.delete(project);
     }
 

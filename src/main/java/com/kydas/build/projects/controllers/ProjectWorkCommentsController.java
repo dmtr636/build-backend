@@ -3,7 +3,7 @@ package com.kydas.build.projects.controllers;
 
 import com.kydas.build.core.crud.BaseController;
 import com.kydas.build.core.endpoints.Endpoints;
-import com.kydas.build.projects.dto.components.ProjectWorkCommentDTO;
+import com.kydas.build.projects.dto.ProjectWorkCommentDTO;
 import com.kydas.build.projects.entities.ProjectWorkComment;
 import com.kydas.build.projects.services.ProjectWorkCommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(Endpoints.PROJECTS_WORKS_COMMENTS)
-@Tag(name = "Сервис работ объекта")
+@Tag(name = "Сервис состава работ на объекте")
 public class ProjectWorkCommentsController extends BaseController<ProjectWorkComment, ProjectWorkCommentDTO> {
 
     private final ProjectWorkCommentService service;
@@ -28,7 +28,7 @@ public class ProjectWorkCommentsController extends BaseController<ProjectWorkCom
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Получение всех комментариев к работе")
+    @Operation(summary = "Получение всех комментариев к работам на объекте")
     public List<ProjectWorkCommentDTO> search(@RequestParam(required = false) UUID workId) {
         return service.getByWorkId(workId);
     }

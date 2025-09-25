@@ -8,11 +8,11 @@ import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.files.FileDTO;
 import com.kydas.build.files.FileRepository;
-import com.kydas.build.projects.dto.ProjectWorkCommentDTO;
-import com.kydas.build.projects.entities.ProjectWorkComment;
-import com.kydas.build.projects.mappers.ProjectWorkCommentMapper;
-import com.kydas.build.projects.repositories.ProjectWorkCommentRepository;
-import com.kydas.build.projects.repositories.ProjectWorkRepository;
+import com.kydas.build.projects.dto.ProjectViolationCommentDTO;
+import com.kydas.build.projects.entities.ProjectViolationComment;
+import com.kydas.build.projects.mappers.ProjectViolationCommentMapper;
+import com.kydas.build.projects.repositories.ProjectViolationCommentRepository;
+import com.kydas.build.projects.repositories.ProjectViolationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -21,25 +21,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Service
-public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, ProjectWorkCommentDTO> {
 
-    private final ProjectWorkCommentRepository commentRepository;
-    private final ProjectWorkRepository workRepository;
-    private final ProjectWorkCommentMapper commentMapper;
+@Service
+public class ProjectViolationCommentService extends BaseService<ProjectViolationComment, ProjectViolationCommentDTO> {
+
+    private final ProjectViolationCommentRepository commentRepository;
+    private final ProjectViolationRepository violationRepository;
+    private final ProjectViolationCommentMapper commentMapper;
     private final EventPublisher eventPublisher;
     private final SecurityContext securityContext;
     private final FileRepository fileRepository;
 
-    public ProjectWorkCommentService(ProjectWorkCommentRepository commentRepository,
-                                     ProjectWorkRepository workRepository,
-                                     ProjectWorkCommentMapper commentMapper,
-                                     EventPublisher eventPublisher,
-                                     SecurityContext securityContext,
-                                     FileRepository fileRepository) {
-        super(ProjectWorkComment.class);
+    public ProjectViolationCommentService(ProjectViolationCommentRepository commentRepository,
+                                          ProjectViolationRepository violationRepository,
+                                          ProjectViolationCommentMapper commentMapper,
+                                          EventPublisher eventPublisher,
+                                          SecurityContext securityContext,
+                                          FileRepository fileRepository) {
+        super(ProjectViolationComment.class);
         this.commentRepository = commentRepository;
-        this.workRepository = workRepository;
+        this.violationRepository = violationRepository;
         this.commentMapper = commentMapper;
         this.eventPublisher = eventPublisher;
         this.securityContext = securityContext;
@@ -47,17 +48,17 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
     }
 
     @Override
-    public ProjectWorkComment makeEntity(ProjectWorkCommentDTO dto) {
-        var comment = new ProjectWorkComment();
+    public ProjectViolationComment makeEntity(ProjectViolationCommentDTO dto) {
+        var comment = new ProjectViolationComment();
         return commentMapper.update(comment, dto);
     }
 
     @Transactional
     @Override
-    public ProjectWorkComment create(ProjectWorkCommentDTO dto) throws ApiException {
-        var work = workRepository.findByIdOrElseThrow(dto.getWorkId());
+    public ProjectViolationComment create(ProjectViolationCommentDTO dto) throws ApiException {
+        var violation = violationRepository.findByIdOrElseThrow(dto.getViolationId());
         var comment = makeEntity(dto);
-        comment.setWork(work);
+        comment.setViolation(violation);
         comment.setAuthor(securityContext.getCurrentUser());
         updateFiles(comment, dto.getFiles());
         return saveAndPublish(comment, EventWebSocketDTO.Type.CREATE);
@@ -65,7 +66,7 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
 
     @Transactional
     @Override
-    public ProjectWorkComment update(ProjectWorkCommentDTO dto) throws ApiException {
+    public ProjectViolationComment update(ProjectViolationCommentDTO dto) throws ApiException {
         var comment = commentRepository.findByIdOrElseThrow(dto.getId());
         commentMapper.update(comment, dto);
         updateFiles(comment, dto.getFiles());
@@ -80,13 +81,13 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
         publish(comment, EventWebSocketDTO.Type.DELETE);
     }
 
-    public List<ProjectWorkCommentDTO> getByWorkId(UUID workId) {
-        return commentRepository.findByWorkId(workId).stream()
+    public List<ProjectViolationCommentDTO> getByViolationId(UUID violationId) {
+        return commentRepository.findByViolationId(violationId).stream()
                 .map(commentMapper::toDTO)
                 .toList();
     }
 
-    private void updateFiles(ProjectWorkComment comment,  List<FileDTO> fileDTOs) {
+    private void updateFiles(ProjectViolationComment comment, List<FileDTO> fileDTOs) {
         if (fileDTOs != null) {
             var files = fileDTOs.stream()
                     .map(FileDTO::getId)
@@ -98,19 +99,20 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
         }
     }
 
-    private ProjectWorkComment saveAndPublish(ProjectWorkComment comment, EventWebSocketDTO.Type type) throws ApiException {
+    private ProjectViolationComment saveAndPublish(ProjectViolationComment comment, EventWebSocketDTO.Type type) throws ApiException {
         var saved = commentRepository.save(comment);
         publish(saved, type);
         return saved;
     }
 
-    private void publish(ProjectWorkComment comment, EventWebSocketDTO.Type type) throws ApiException {
+    private void publish(ProjectViolationComment comment, EventWebSocketDTO.Type type) throws ApiException {
         eventPublisher.publish(
-                "project-work-comment",
+                "project-violation-comment",
                 type,
                 ActionType.WORK,
                 commentMapper.toDTO(comment),
-                Map.of("workId", comment.getWork().getId().toString())
+                Map.of("violationId", comment.getViolation().getId().toString())
         );
     }
 }
+

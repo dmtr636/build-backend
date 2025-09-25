@@ -2,6 +2,7 @@ package com.kydas.build.dictionaries.violation;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import jakarta.transaction.Transactional;
@@ -37,7 +38,7 @@ public class ConstructionViolationService extends BaseService<ConstructionViolat
     public ConstructionViolation create(ConstructionViolationDTO constructionViolationDTO) throws ApiException {
         var constructionViolation = makeEntity(constructionViolationDTO);
         var saved = violationRepository.save(constructionViolation);
-        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.CREATE, violationMapper.toDTO(saved));
+        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.CREATE, ActionType.SYSTEM, violationMapper.toDTO(saved));
         return saved;
     }
 
@@ -46,7 +47,7 @@ public class ConstructionViolationService extends BaseService<ConstructionViolat
         var constructionViolation = violationRepository.findByIdOrElseThrow(constructionViolationDTO.getId());
         violationMapper.update(constructionViolation, constructionViolationDTO);
         var updated = violationRepository.save(constructionViolation);
-        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.UPDATE, violationMapper.toDTO(updated));
+        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.UPDATE, ActionType.SYSTEM, violationMapper.toDTO(updated));
         return updated;
     }
 
@@ -54,7 +55,7 @@ public class ConstructionViolationService extends BaseService<ConstructionViolat
     @Override
     public void delete(UUID id) throws ApiException {
         var constructionViolation = violationRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.DELETE, violationMapper.toDTO(constructionViolation));
+        eventPublisher.publish("construction-violation", EventWebSocketDTO.Type.DELETE, ActionType.SYSTEM, violationMapper.toDTO(constructionViolation));
         violationRepository.delete(constructionViolation);
     }
 }
