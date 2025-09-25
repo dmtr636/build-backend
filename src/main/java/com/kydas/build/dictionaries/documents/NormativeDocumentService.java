@@ -2,6 +2,7 @@ package com.kydas.build.dictionaries.documents;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import jakarta.transaction.Transactional;
@@ -37,7 +38,7 @@ public class NormativeDocumentService extends BaseService<NormativeDocument, Nor
     public NormativeDocument create(NormativeDocumentDTO normativeDocumentDTO) throws ApiException {
         var normativeDocument = makeEntity(normativeDocumentDTO);
         var saved = documentRepository.save(normativeDocument);
-        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.CREATE, documentMapper.toDTO(saved));
+        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.CREATE, ActionType.SYSTEM, documentMapper.toDTO(saved));
         return saved;
     }
 
@@ -46,7 +47,7 @@ public class NormativeDocumentService extends BaseService<NormativeDocument, Nor
         var normativeDocument = documentRepository.findByIdOrElseThrow(normativeDocumentDTO.getId());
         documentMapper.update(normativeDocument, normativeDocumentDTO);
         var updated = documentRepository.save(normativeDocument);
-        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.UPDATE, documentMapper.toDTO(updated));
+        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.UPDATE, ActionType.SYSTEM, documentMapper.toDTO(updated));
         return updated;
     }
 
@@ -54,7 +55,7 @@ public class NormativeDocumentService extends BaseService<NormativeDocument, Nor
     @Override
     public void delete(UUID id) throws ApiException {
         var normativeDocument = documentRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.DELETE, documentMapper.toDTO(normativeDocument));
+        eventPublisher.publish("normative-document", EventWebSocketDTO.Type.DELETE, ActionType.SYSTEM, documentMapper.toDTO(normativeDocument));
         documentRepository.delete(normativeDocument);
     }
 }

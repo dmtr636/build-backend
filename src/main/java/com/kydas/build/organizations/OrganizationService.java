@@ -2,6 +2,7 @@ package com.kydas.build.organizations;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.users.User;
@@ -44,12 +45,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     public Organization create(OrganizationDTO organizationDTO) throws ApiException {
         var organization = makeEntity(organizationDTO);
         var saved = organizationRepository.save(organization);
-        eventPublisher.publish(
-            "organization",
-            EventWebSocketDTO.Type.CREATE,
-            organizationMapper.toDTO(saved),
-            Map.of("name", saved.getName())
-        );
+        publish("organization", saved, EventWebSocketDTO.Type.CREATE);
         return saved;
     }
 
@@ -58,12 +54,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
         var organization = organizationRepository.findByIdOrElseThrow(organizationDTO.getId());
         organizationMapper.update(organization, organizationDTO);
         var updated = organizationRepository.save(organization);
-        eventPublisher.publish(
-            "organization",
-            EventWebSocketDTO.Type.UPDATE,
-            organizationMapper.toDTO(updated),
-            Map.of("name", updated.getName())
-        );
+        publish("organization", updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
     }
 
@@ -71,12 +62,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
     @Override
     public void delete(UUID id) throws ApiException {
         var organization = organizationRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish(
-            "organization",
-            EventWebSocketDTO.Type.DELETE,
-            organizationMapper.toDTO(organization),
-            Map.of("name", organization.getName())
-        );
+        publish("organization", organization, EventWebSocketDTO.Type.DELETE);
         organizationRepository.delete(organization);
     }
 
@@ -92,13 +78,7 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
                 organization.getEmployees().add(u);
             }
         }
-
-        eventPublisher.publish(
-                "organization-employees",
-                EventWebSocketDTO.Type.UPDATE,
-                organizationMapper.toDTO(organization),
-                Map.of("name", organization.getName())
-        );
+        publish("organization-employees", organization, EventWebSocketDTO.Type.UPDATE);
     }
 
     @Transactional
@@ -111,10 +91,14 @@ public class OrganizationService extends BaseService<Organization, OrganizationD
             }
             return toRemove;
         });
+        publish("organization-employees", organization, EventWebSocketDTO.Type.UPDATE);
+    }
 
+    private void publish(String name, Organization organization, EventWebSocketDTO.Type type) throws ApiException {
         eventPublisher.publish(
-                "organization-employees",
-                EventWebSocketDTO.Type.UPDATE,
+                name,
+                type,
+                ActionType.SYSTEM,
                 organizationMapper.toDTO(organization),
                 Map.of("name", organization.getName())
         );

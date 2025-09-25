@@ -2,6 +2,7 @@ package com.kydas.build.dictionaries.work;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import jakarta.transaction.Transactional;
@@ -37,7 +38,7 @@ public class ConstructionWorkService extends BaseService<ConstructionWork, Const
     public ConstructionWork create(ConstructionWorkDTO constructionWorkDTO) throws ApiException {
         var constructionWork = makeEntity(constructionWorkDTO);
         var saved = workRepository.save(constructionWork);
-        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.CREATE, workMapper.toDTO(saved));
+        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.CREATE, ActionType.SYSTEM, workMapper.toDTO(saved));
         return saved;
     }
 
@@ -46,7 +47,7 @@ public class ConstructionWorkService extends BaseService<ConstructionWork, Const
         var constructionWork = workRepository.findByIdOrElseThrow(constructionWorkDTO.getId());
         workMapper.update(constructionWork, constructionWorkDTO);
         var updated = workRepository.save(constructionWork);
-        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.UPDATE, workMapper.toDTO(updated));
+        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.UPDATE, ActionType.SYSTEM, workMapper.toDTO(updated));
         return updated;
     }
 
@@ -54,7 +55,7 @@ public class ConstructionWorkService extends BaseService<ConstructionWork, Const
     @Override
     public void delete(UUID id) throws ApiException {
         var constructionWork = workRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.DELETE, workMapper.toDTO(constructionWork));
+        eventPublisher.publish("construction-work", EventWebSocketDTO.Type.DELETE, ActionType.SYSTEM, workMapper.toDTO(constructionWork));
         workRepository.delete(constructionWork);
     }
 }

@@ -2,6 +2,7 @@ package com.kydas.build.projects.services;
 
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
+import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.projects.dto.components.ProjectWorkDTO;
@@ -113,6 +114,7 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         eventPublisher.publish(
                 "project-work",
                 type,
+                ActionType.WORK,
                 workMapper.toDTO(work),
                 Map.of("name", work.getName())
         );
