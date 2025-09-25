@@ -1,8 +1,8 @@
 package com.kydas.build.projects.dto.components;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.kydas.build.core.serialization.InstantToStringSerializer;
+import com.kydas.build.core.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +19,7 @@ public class ProjectWorkCommentDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID authorId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonSerialize(using = InstantToStringSerializer.class)
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createdAt;
     private List<UUID> fileIds;
 }

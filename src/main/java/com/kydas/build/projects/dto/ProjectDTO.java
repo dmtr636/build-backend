@@ -1,10 +1,8 @@
 package com.kydas.build.projects.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.kydas.build.core.serialization.InstantFromStringDeserializer;
-import com.kydas.build.core.serialization.InstantToStringSerializer;
+import com.kydas.build.core.utils.DateUtils;
 import com.kydas.build.projects.dto.components.AddressDTO;
 import com.kydas.build.projects.dto.components.ConstructionPeriodDTO;
 import com.kydas.build.projects.dto.components.CoordinateDTO;
@@ -31,8 +29,7 @@ public class ProjectDTO {
     private UUID customerOrganization;
     private UUID contractorOrganization;
     private List<ProjectUserDTO> projectUsers;
-    @JsonSerialize(using = InstantToStringSerializer.class)
-    @JsonDeserialize(using = InstantFromStringDeserializer.class)
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant lastInspection;
     private ConstructionPeriodDTO plannedPeriod;
     private ConstructionPeriodDTO actualPeriod;
@@ -43,9 +40,9 @@ public class ProjectDTO {
     private List<ProjectImageDTO> gallery;
     private List<ProjectDocumentDTO> documents;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonSerialize(using = InstantToStringSerializer.class)
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createdAt;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonSerialize(using = InstantToStringSerializer.class)
+    @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant updatedAt;
 }
