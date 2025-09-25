@@ -10,7 +10,6 @@ public class AddressDTO {
     @NotBlank
     private String city;
 
-    @NotBlank
     private String street;
 
     private String house;
