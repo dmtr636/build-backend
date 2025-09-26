@@ -5,7 +5,7 @@ import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
-import com.kydas.build.projects.dto.components.ProjectWorkDTO;
+import com.kydas.build.projects.dto.ProjectWorkDTO;
 import com.kydas.build.projects.entities.ProjectWork;
 import com.kydas.build.projects.entities.ProjectWorkStage;
 import com.kydas.build.projects.mappers.ProjectWorkMapper;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -26,21 +27,23 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
     private final ProjectRepository projectRepository;
     private final ProjectWorkMapper workMapper;
     private final ProjectWorkStageMapper stageMapper;
-    private final ProjectVisitService projectVisitService;
+    private final ProjectVisitService visitService;
+    private final ProjectWorkVersionService versionService;
     private final EventPublisher eventPublisher;
 
     public ProjectWorkService(ProjectWorkRepository workRepository,
                               ProjectRepository projectRepository,
                               ProjectWorkMapper workMapper,
                               ProjectWorkStageMapper stageMapper,
-                              ProjectVisitService projectVisitService,
+                              ProjectVisitService visitService, ProjectWorkVersionService versionService,
                               EventPublisher eventPublisher) {
         super(ProjectWork.class);
         this.workRepository = workRepository;
         this.projectRepository = projectRepository;
         this.workMapper = workMapper;
         this.stageMapper = stageMapper;
-        this.projectVisitService = projectVisitService;
+        this.visitService = visitService;
+        this.versionService = versionService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -58,7 +61,14 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         var project = projectRepository.findByIdOrElseThrow(dto.getProjectId());
         var work = makeEntity(dto);
         work.setProject(project);
-        return saveAndPublish(work, EventWebSocketDTO.Type.CREATE);
+        var saved = saveAndPublish(work, EventWebSocketDTO.Type.CREATE);
+        if (Objects.nonNull(dto.getWorkVersion())) {
+            var versionDTO = dto.getWorkVersion();
+            versionDTO.setWorkId(saved.getId());
+            var version = versionService.create(versionDTO);
+            saved.getWorkVersions().add(version);
+        }
+        return saved;
     }
 
     @Transactional
@@ -93,7 +103,7 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         updateCompletionPercent(work);
 
         if (visitId != null) {
-            projectVisitService.addWorkToVisit(visitId, work);
+            visitService.addWorkToVisit(visitId, work);
         }
 
         var updated = workRepository.save(work);

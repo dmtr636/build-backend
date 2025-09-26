@@ -1,6 +1,8 @@
-package com.kydas.build.projects.dto.components;
+package com.kydas.build.projects.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kydas.build.projects.dto.components.ProjectWorkStageDTO;
+import com.kydas.build.projects.dto.components.ProjectWorkVersionDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +17,10 @@ public class ProjectWorkDTO {
     private UUID projectId;
     private String name;
     private String status;
-    private ConstructionPeriodDTO plannedPeriod;
-    private ConstructionPeriodDTO actualPeriod;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private ProjectWorkVersionDTO workVersion;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<ProjectWorkVersionDTO> workVersions = new ArrayList<>();
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer completionPercent;
     private Double plannedVolume;
