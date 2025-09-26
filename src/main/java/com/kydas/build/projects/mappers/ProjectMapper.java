@@ -24,6 +24,7 @@ public interface ProjectMapper extends BaseMapper<Project, ProjectDTO> {
     @Override
     ProjectDTO toDTO(Project entity);
 
+    @Mapping(target = "objectNumber", ignore = true)
     @Mapping(target = "projectUsers", ignore = true)
     @Mapping(target = "gallery", ignore = true)
     @Mapping(target = "documents", ignore = true)
