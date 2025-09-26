@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -62,6 +63,9 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
         var project = projectRepository.findByIdOrElseThrow(dto.getId());
         projectMapper.update(project, dto);
         entitySynchronizer.updateProjectRelations(project, dto);
+        if (Objects.isNull(project.getObjectNumber())) {
+            project.setObjectNumber(generateUniqueObjectNumber());
+        }
         var updated = projectRepository.save(project);
         eventPublisher.publish("project", EventWebSocketDTO.Type.UPDATE, ActionType.WORK, projectMapper.toDTO(updated));
         return updated;
