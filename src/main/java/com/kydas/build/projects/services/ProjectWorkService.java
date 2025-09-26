@@ -26,18 +26,21 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
     private final ProjectRepository projectRepository;
     private final ProjectWorkMapper workMapper;
     private final ProjectWorkStageMapper stageMapper;
+    private final ProjectVisitService projectVisitService;
     private final EventPublisher eventPublisher;
 
     public ProjectWorkService(ProjectWorkRepository workRepository,
                               ProjectRepository projectRepository,
                               ProjectWorkMapper workMapper,
                               ProjectWorkStageMapper stageMapper,
+                              ProjectVisitService projectVisitService,
                               EventPublisher eventPublisher) {
         super(ProjectWork.class);
         this.workRepository = workRepository;
         this.projectRepository = projectRepository;
         this.workMapper = workMapper;
         this.stageMapper = stageMapper;
+        this.projectVisitService = projectVisitService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -80,6 +83,22 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         return workRepository.findByProjectId(projectId).stream()
                 .map(workMapper::toDTO)
                 .toList();
+    }
+
+    @Transactional
+    public ProjectWorkDTO changeStatus(UUID workId, UUID visitId, String newStatus) throws ApiException {
+        var work = workRepository.findByIdOrElseThrow(workId);
+
+        work.setStatus(newStatus);
+        updateCompletionPercent(work);
+
+        if (visitId != null) {
+            projectVisitService.addWorkToVisit(visitId, work);
+        }
+
+        var updated = workRepository.save(work);
+        publish(updated, EventWebSocketDTO.Type.UPDATE);
+        return workMapper.toDTO(updated);
     }
 
     private void setStages(ProjectWork work, ProjectWorkDTO dto) {

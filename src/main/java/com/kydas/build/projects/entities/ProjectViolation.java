@@ -15,6 +15,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -97,6 +98,9 @@ public class ProjectViolation extends BaseEntity {
     @JoinColumn(name = "assignee_id")
     private User assignee;
 
+    @ManyToMany(mappedBy = "violations")
+    private List<ProjectVisit> visits = new ArrayList<>();
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt;
@@ -105,4 +109,3 @@ public class ProjectViolation extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 }
-

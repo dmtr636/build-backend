@@ -29,6 +29,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     private final ProjectViolationRepository violationRepository;
     private final ProjectRepository projectRepository;
     private final ProjectViolationMapper violationMapper;
+    private final ProjectVisitService projectVisitService;
     private final EventPublisher eventPublisher;
     private final SecurityContext securityContext;
     private final FileRepository fileRepository;
@@ -36,6 +37,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     public ProjectViolationService(ProjectViolationRepository violationRepository,
                                    ProjectRepository projectRepository,
                                    ProjectViolationMapper violationMapper,
+                                   ProjectVisitService projectVisitService,
                                    EventPublisher eventPublisher,
                                    SecurityContext securityContext,
                                    FileRepository fileRepository) {
@@ -43,6 +45,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         this.violationRepository = violationRepository;
         this.projectRepository = projectRepository;
         this.violationMapper = violationMapper;
+        this.projectVisitService = projectVisitService;
         this.eventPublisher = eventPublisher;
         this.securityContext = securityContext;
         this.fileRepository = fileRepository;
@@ -65,6 +68,9 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         var violation = makeEntity(dto);
         violation.setProject(project);
         var saved = violationRepository.save(violation);
+        if (dto.getVisitId() != null) {
+            projectVisitService.addViolationToVisit(dto.getVisitId(), saved);
+        }
         publish(saved, EventWebSocketDTO.Type.CREATE);
         return saved;
     }
@@ -96,7 +102,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     }
 
     @Transactional
-    public ProjectViolationDTO changeStatus(UUID violationId, ProjectViolationStatus newStatus) throws ApiException {
+    public ProjectViolationDTO changeStatus(UUID violationId, UUID visitId, ProjectViolationStatus newStatus) throws ApiException {
         var violation = violationRepository.findByIdOrElseThrow(violationId);
         var oldStatus = violation.getStatus();
 
@@ -108,6 +114,10 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
 
         violation.setStatus(newStatus);
         violation.setUpdatedAt(Instant.now());
+
+        if (visitId != null) {
+            projectVisitService.addViolationToVisit(visitId, violation);
+        }
 
         var updated = violationRepository.save(violation);
         publish(updated, EventWebSocketDTO.Type.UPDATE);

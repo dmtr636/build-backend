@@ -17,6 +17,7 @@ public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, Pro
     @Mapping(target = "projectId", source = "project.id")
     @Mapping(target = "latitude", source = "coordinate.latitude")
     @Mapping(target = "longitude", source = "coordinate.longitude")
+    @Mapping(target = "visitId", ignore = true)
     ProjectViolationDTO toDTO(ProjectViolation entity);
 
     @Override
@@ -29,6 +30,7 @@ public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, Pro
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "photos", ignore = true)
     @Mapping(target = "files", ignore = true)
+    @Mapping(target = "visits", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)

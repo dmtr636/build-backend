@@ -38,6 +38,8 @@ public class ProjectViolationDTO extends BaseDTO {
     private UserDTO author;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserDTO assignee;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private UUID visitId;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createdAt;

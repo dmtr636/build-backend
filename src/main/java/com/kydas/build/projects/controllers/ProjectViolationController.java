@@ -38,7 +38,8 @@ public class ProjectViolationController extends BaseController<ProjectViolation,
 
     @PatchMapping("/{id}/status")
     public ProjectViolationDTO changeStatus(@PathVariable UUID id,
+                                            @RequestParam(required = false) UUID visitId,
                                             @RequestParam ProjectViolationStatus status) throws ApiException {
-        return service.changeStatus(id, status);
+        return service.changeStatus(id, visitId, status);
     }
 }

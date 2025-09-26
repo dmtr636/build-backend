@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -71,6 +72,9 @@ public class ProjectWork extends BaseEntity {
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     private List<ProjectWorkComment> comments = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "works")
+    private List<ProjectVisit> visits = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

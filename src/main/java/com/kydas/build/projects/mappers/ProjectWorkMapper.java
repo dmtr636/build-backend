@@ -26,6 +26,7 @@ public interface ProjectWorkMapper extends BaseMapper<ProjectWork, ProjectWorkDT
     @Mapping(target = "project", ignore = true)
     @Mapping(target = "stages", ignore = true)
     @Mapping(target = "comments", ignore = true)
+    @Mapping(target = "visits", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
