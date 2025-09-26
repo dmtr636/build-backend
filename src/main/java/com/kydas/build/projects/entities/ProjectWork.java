@@ -1,7 +1,6 @@
 package com.kydas.build.projects.entities;
 
 import com.kydas.build.core.crud.BaseEntity;
-import com.kydas.build.projects.entities.embeddable.ConstructionPeriod;
 import com.kydas.build.projects.entities.embeddable.WorkVolume;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -37,19 +36,9 @@ public class ProjectWork extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "start", column = @Column(name = "planned_start")),
-            @AttributeOverride(name = "end", column = @Column(name = "planned_end"))
-    })
-    private ConstructionPeriod plannedPeriod;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "start", column = @Column(name = "actual_start")),
-            @AttributeOverride(name = "end", column = @Column(name = "actual_end"))
-    })
-    private ConstructionPeriod actualPeriod;
+    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("versionNumber DESC")
+    private List<ProjectWorkVersion> workVersions = new ArrayList<>();
 
     @Column(nullable = false)
     private String status;

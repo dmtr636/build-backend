@@ -1,7 +1,7 @@
 package com.kydas.build.projects.mappers;
 
 import com.kydas.build.core.crud.BaseMapper;
-import com.kydas.build.projects.dto.components.ProjectWorkDTO;
+import com.kydas.build.projects.dto.ProjectWorkDTO;
 import com.kydas.build.projects.entities.ProjectWork;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,9 +17,11 @@ public interface ProjectWorkMapper extends BaseMapper<ProjectWork, ProjectWorkDT
     @Mapping(target = "plannedVolume", source = "volume.planned")
     @Mapping(target = "actualVolume", source = "volume.actual")
     @Mapping(target = "volumeUnit", source = "volume.unit")
+    @Mapping(target = "workVersion", ignore = true)
     ProjectWorkDTO toDTO(ProjectWork entity);
 
     @Override
+    @Mapping(target = "workVersions", ignore = true)
     @Mapping(target = "volume.planned", source = "plannedVolume")
     @Mapping(target = "volume.actual", source = "actualVolume")
     @Mapping(target = "volume.unit", source = "volumeUnit")

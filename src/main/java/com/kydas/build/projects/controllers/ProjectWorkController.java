@@ -3,7 +3,7 @@ package com.kydas.build.projects.controllers;
 import com.kydas.build.core.crud.BaseController;
 import com.kydas.build.core.endpoints.Endpoints;
 import com.kydas.build.core.exceptions.classes.ApiException;
-import com.kydas.build.projects.dto.components.ProjectWorkDTO;
+import com.kydas.build.projects.dto.ProjectWorkDTO;
 import com.kydas.build.projects.entities.ProjectWork;
 import com.kydas.build.projects.services.ProjectWorkService;
 import io.swagger.v3.oas.annotations.Operation;

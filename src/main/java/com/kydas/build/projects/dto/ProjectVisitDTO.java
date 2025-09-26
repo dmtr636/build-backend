@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kydas.build.core.crud.BaseDTO;
 import com.kydas.build.core.utils.DateUtils;
-import com.kydas.build.projects.dto.components.ProjectWorkDTO;
 import com.kydas.build.users.UserDTO;
 import lombok.Getter;
 import lombok.Setter;

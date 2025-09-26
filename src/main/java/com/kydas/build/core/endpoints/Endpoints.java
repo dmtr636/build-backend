@@ -20,4 +20,5 @@ public class Endpoints {
     public static final String PROJECTS_VIOLATIONS = PROJECTS + "/violations";
     public static final String PROJECTS_VIOLATIONS_COMMENTS = PROJECTS_VIOLATIONS + "/comments";
     public static final String PROJECTS_VISITS = PROJECTS + "/visits";
+    public static final String PROJECTS_WORK_VERSIONS = PROJECTS_WORKS + "/versions";
 }
