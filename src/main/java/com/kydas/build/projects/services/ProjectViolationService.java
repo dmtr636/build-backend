@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -139,7 +140,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
 
     private List<File> getFiles(List<FileDTO> dtos) {
         if (dtos == null || dtos.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
         var ids = dtos.stream()
                 .map(FileDTO::getId)
