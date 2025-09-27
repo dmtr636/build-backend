@@ -29,6 +29,7 @@ public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, Pro
     @Mapping(target = "assignee", ignore = true)
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "photos", ignore = true)
+    @Mapping(target = "resolutionPhotos", ignore = true)
     @Mapping(target = "files", ignore = true)
     @Mapping(target = "visits", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

@@ -34,6 +34,7 @@ public class ProjectViolationDTO extends BaseDTO {
     private Double longitude;
     private List<FileDTO> files = new ArrayList<>();
     private List<FileDTO> photos = new ArrayList<>();
+    private List<FileDTO> resolutionPhotos = new ArrayList<>();
     private List<ProjectViolationCommentDTO> comments = new ArrayList<>();
     private UserDTO author;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

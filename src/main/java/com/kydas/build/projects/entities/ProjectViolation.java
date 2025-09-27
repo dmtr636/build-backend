@@ -87,6 +87,15 @@ public class ProjectViolation extends BaseEntity {
     )
     private List<File> photos = new ArrayList<>();
 
+    @OneToMany
+    @JoinTable(
+            name = "project_violation_resolution_photos",
+            joinColumns = @JoinColumn(name = "violation_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+    private List<File> resolutionPhotos = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "violation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectViolationComment> comments = new ArrayList<>();
 

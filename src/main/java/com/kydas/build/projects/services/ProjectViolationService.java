@@ -57,6 +57,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violation.setStatus(ProjectViolationStatus.TODO);
         violation.setFiles(getFiles(dto.getFiles()));
         violation.setPhotos(getFiles(dto.getPhotos()));
+        violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
         violation.setAuthor(securityContext.getCurrentUser());
         return violation;
     }
@@ -82,6 +83,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violationMapper.update(violation, dto);
         violation.setFiles(getFiles(dto.getFiles()));
         violation.setPhotos(getFiles(dto.getPhotos()));
+        violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
         var updated = violationRepository.save(violation);
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
