@@ -1,6 +1,7 @@
 package com.kydas.build.projects.entities;
 
 import com.kydas.build.core.crud.BaseEntity;
+import com.kydas.build.dictionaries.documents.NormativeDocument;
 import com.kydas.build.files.File;
 import com.kydas.build.projects.dto.enums.ProjectViolationStatus;
 import com.kydas.build.projects.entities.embeddable.Coordinate;
@@ -109,6 +110,14 @@ public class ProjectViolation extends BaseEntity {
 
     @ManyToMany(mappedBy = "violations")
     private List<ProjectVisit> visits = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_violation_normative_documents",
+            joinColumns = @JoinColumn(name = "violation_id"),
+            inverseJoinColumns = @JoinColumn(name = "document_id")
+    )
+    private List<NormativeDocument> normativeDocuments = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

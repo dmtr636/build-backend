@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -57,5 +59,15 @@ public class NormativeDocumentService extends BaseService<NormativeDocument, Nor
         var normativeDocument = documentRepository.findByIdOrElseThrow(id);
         eventPublisher.publish("normative-document", EventWebSocketDTO.Type.DELETE, ActionType.SYSTEM, documentMapper.toDTO(normativeDocument));
         documentRepository.delete(normativeDocument);
+    }
+
+    public List<NormativeDocument> getNormativeDocuments(List<NormativeDocumentDTO> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            return new ArrayList<>();
+        }
+        var ids = dtos.stream()
+                .map(NormativeDocumentDTO::getId)
+                .toList();
+        return documentRepository.findAllById(ids);
     }
 }

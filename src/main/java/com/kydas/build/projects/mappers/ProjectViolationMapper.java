@@ -1,6 +1,7 @@
 package com.kydas.build.projects.mappers;
 
 import com.kydas.build.core.crud.BaseMapper;
+import com.kydas.build.dictionaries.documents.NormativeDocumentMapper;
 import com.kydas.build.files.FileMapper;
 import com.kydas.build.projects.dto.ProjectViolationDTO;
 import com.kydas.build.projects.entities.ProjectViolation;
@@ -11,7 +12,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {ProjectViolationCommentMapper.class, FileMapper.class, UserMapper.class})
+        uses = {ProjectViolationCommentMapper.class, FileMapper.class, UserMapper.class, NormativeDocumentMapper.class})
 public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, ProjectViolationDTO> {
     @Override
     @Mapping(target = "projectId", source = "project.id")
@@ -32,6 +33,7 @@ public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, Pro
     @Mapping(target = "resolutionPhotos", ignore = true)
     @Mapping(target = "files", ignore = true)
     @Mapping(target = "visits", ignore = true)
+    @Mapping(target = "normativeDocuments", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)

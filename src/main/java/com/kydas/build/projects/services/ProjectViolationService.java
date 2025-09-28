@@ -3,6 +3,7 @@ package com.kydas.build.projects.services;
 import com.kydas.build.core.crud.BaseService;
 import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.core.security.SecurityContext;
+import com.kydas.build.dictionaries.documents.NormativeDocumentService;
 import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
@@ -31,6 +32,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     private final ProjectRepository projectRepository;
     private final ProjectViolationMapper violationMapper;
     private final ProjectVisitService projectVisitService;
+    private final NormativeDocumentService documentService;
     private final EventPublisher eventPublisher;
     private final SecurityContext securityContext;
     private final FileRepository fileRepository;
@@ -39,6 +41,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
                                    ProjectRepository projectRepository,
                                    ProjectViolationMapper violationMapper,
                                    ProjectVisitService projectVisitService,
+                                   NormativeDocumentService documentService,
                                    EventPublisher eventPublisher,
                                    SecurityContext securityContext,
                                    FileRepository fileRepository) {
@@ -47,6 +50,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         this.projectRepository = projectRepository;
         this.violationMapper = violationMapper;
         this.projectVisitService = projectVisitService;
+        this.documentService = documentService;
         this.eventPublisher = eventPublisher;
         this.securityContext = securityContext;
         this.fileRepository = fileRepository;
@@ -59,6 +63,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violation.setFiles(getFiles(dto.getFiles()));
         violation.setPhotos(getFiles(dto.getPhotos()));
         violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
+        violation.setNormativeDocuments(documentService.getNormativeDocuments(dto.getNormativeDocuments()));
         violation.setAuthor(securityContext.getCurrentUser());
         return violation;
     }
@@ -85,6 +90,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violation.setFiles(getFiles(dto.getFiles()));
         violation.setPhotos(getFiles(dto.getPhotos()));
         violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
+        violation.setNormativeDocuments(documentService.getNormativeDocuments(dto.getNormativeDocuments()));
         var updated = violationRepository.save(violation);
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
