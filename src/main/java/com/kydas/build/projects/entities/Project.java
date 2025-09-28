@@ -1,5 +1,6 @@
 package com.kydas.build.projects.entities;
 
+import com.kydas.build.checklists.entities.ChecklistInstance;
 import com.kydas.build.core.crud.BaseEntity;
 import com.kydas.build.organizations.Organization;
 import com.kydas.build.projects.entities.embeddable.Address;
@@ -16,6 +17,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -103,6 +105,13 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectWork> works = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChecklistInstance> dailyChecklists = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "opening_checklist_id")
+    private ChecklistInstance openingChecklist;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
