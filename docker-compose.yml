@@ -28,6 +28,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./cdn:/srv/cdn
+    environment:
+      - DOMAIN=${DOMAIN}
 
   db:
     image: postgres:15.7-alpine3.20

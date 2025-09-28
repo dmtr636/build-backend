@@ -1,4 +1,4 @@
-api.dev.build.kydas.ru {
+api.{$DOMAIN} {
     reverse_proxy app:8080 {
         header_up Host {host}
         header_up X-Forwarded-For {remote}
@@ -36,8 +36,8 @@ api.dev.build.kydas.ru {
     encode zstd gzip
 }
 
-dev.build.kydas.ru {
-    root * /srv/cdn/frontend-dev/admin/dist
+{$DOMAIN} {
+    root * /srv/cdn/frontend/admin/dist
     file_server
 
     @assets path /assets/*
