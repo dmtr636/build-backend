@@ -44,6 +44,9 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     public Project makeEntity(ProjectDTO dto) {
         var project = new Project();
         projectMapper.update(project, dto);
+        if (Objects.isNull(project.getObjectNumber())) {
+            project.setObjectNumber(generateUniqueObjectNumber());
+        }
         entitySynchronizer.updateProjectRelations(project, dto);
         return project;
     }
@@ -62,9 +65,6 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
         var project = projectRepository.findByIdOrElseThrow(dto.getId());
         projectMapper.update(project, dto);
         entitySynchronizer.updateProjectRelations(project, dto);
-        if (Objects.isNull(project.getObjectNumber())) {
-            project.setObjectNumber(generateUniqueObjectNumber());
-        }
         var updated = projectRepository.save(project);
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
