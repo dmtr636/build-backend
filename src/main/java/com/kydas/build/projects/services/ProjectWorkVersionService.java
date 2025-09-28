@@ -113,7 +113,7 @@ public class ProjectWorkVersionService extends BaseService<ProjectWorkVersion, P
                 type,
                 ActionType.WORK,
                 versionMapper.toDTO(version),
-                Map.of("versionNumber", version.getVersionNumber())
+                Map.of("versionNumber", version.getVersionNumber(), "projectId", version.getWork().getProject().getId())
         );
     }
 }

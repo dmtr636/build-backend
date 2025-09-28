@@ -140,7 +140,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
                 type,
                 ActionType.WORK,
                 violationMapper.toDTO(violation),
-                Map.of("name", violation.getName())
+                Map.of("name", violation.getName(), "projectId", violation.getProject().getId())
         );
     }
 

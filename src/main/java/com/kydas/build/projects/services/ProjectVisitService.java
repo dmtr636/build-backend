@@ -129,7 +129,7 @@ public class ProjectVisitService extends BaseService<ProjectVisit, ProjectVisitD
                 type,
                 ActionType.WORK,
                 visitMapper.toDTO(visit),
-                Map.of("projectName", visit.getProject().getName())
+                Map.of("projectName", visit.getProject().getName(), "projectId", visit.getProject().getId())
         );
     }
 }

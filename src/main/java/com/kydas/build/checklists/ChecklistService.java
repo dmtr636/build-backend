@@ -12,7 +12,11 @@ import com.kydas.build.checklists.mappers.ChecklistItemAnswerMapper;
 import com.kydas.build.checklists.mappers.TemplateSectionMapper;
 import com.kydas.build.checklists.repositories.ChecklistInstanceRepository;
 import com.kydas.build.checklists.repositories.ChecklistTemplateRepository;
+import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.core.exceptions.classes.NotFoundException;
+import com.kydas.build.events.ActionType;
+import com.kydas.build.events.EventPublisher;
+import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.projects.repositories.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,10 +35,10 @@ public class ChecklistService {
     private final ProjectRepository projectRepository;
     private final ChecklistInstanceRepository checklistInstanceRepository;
     private final ChecklistTemplateRepository checklistTemplateRepository;
-
     private final ChecklistInstanceMapper checklistInstanceMapper;
     private final TemplateSectionMapper sectionMapper;
     private final ChecklistItemAnswerMapper answerMapper;
+    private final EventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<ChecklistInstanceDTO> getChecklistsByType(UUID projectId, ChecklistFormType type) throws NotFoundException {
@@ -81,7 +86,7 @@ public class ChecklistService {
     }
 
     @Transactional
-    public ChecklistInstanceDTO createChecklistInstance(UUID projectId, ChecklistFormType type, List<ChecklistItemAnswerDTO> answers) throws NotFoundException {
+    public ChecklistInstanceDTO createChecklistInstance(UUID projectId, ChecklistFormType type, List<ChecklistItemAnswerDTO> answers) throws ApiException {
         var project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException("Project not found"));
 
@@ -119,11 +124,14 @@ public class ChecklistService {
 
         checklistInstanceRepository.save(instance);
         checklistInstanceRepository.flush();
+
+        publish(instance, EventWebSocketDTO.Type.CREATE);
+
         return buildChecklistInstanceDTO(instance);
     }
 
     @Transactional
-    public ChecklistInstanceDTO submitAnswers(UUID projectId, ChecklistSubmitDTO submitDTO) throws NotFoundException {
+    public ChecklistInstanceDTO submitAnswers(UUID projectId, ChecklistSubmitDTO submitDTO) throws ApiException {
         projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException("Project not found"));
 
@@ -152,7 +160,20 @@ public class ChecklistService {
         }
         instance.setStatus(submitDTO.getStatus());
         checklistInstanceRepository.save(instance);
+
+        publish(instance, EventWebSocketDTO.Type.UPDATE);
+
         return buildChecklistInstanceDTO(instance);
+    }
+
+    private void publish(ChecklistInstance instance, EventWebSocketDTO.Type type) throws ApiException {
+        eventPublisher.publish(
+                "checklist",
+                type,
+                ActionType.WORK,
+                checklistInstanceMapper.toDTO(instance),
+                Map.of("checklistInstanceId", instance.getId(), "projectId", instance.getProject().getId())
+        );
     }
 
     private ChecklistInstanceDTO buildChecklistInstanceDTO(ChecklistInstance instance) {
