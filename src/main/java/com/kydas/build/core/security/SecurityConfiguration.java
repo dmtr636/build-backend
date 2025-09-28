@@ -47,7 +47,6 @@ public class SecurityConfiguration {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(antMatcher("/api/internal/**")).hasRole("ROOT")
-                .requestMatchers(antMatcher("/api/admin/**")).hasAnyRole("ROOT", "ADMIN")
                 .requestMatchers(antMatcher("/api/auth/**")).permitAll()
                 .requestMatchers(antMatcher("/api/public/**")).permitAll()
                 .requestMatchers(antMatcher("/api/caddy/**")).permitAll()
