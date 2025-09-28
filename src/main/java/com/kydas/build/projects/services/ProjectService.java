@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
@@ -43,9 +44,6 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     public Project makeEntity(ProjectDTO dto) {
         var project = new Project();
         projectMapper.update(project, dto);
-        if (project.getObjectNumber() == null) {
-            project.setObjectNumber(generateUniqueObjectNumber());
-        }
         entitySynchronizer.updateProjectRelations(project, dto);
         return project;
     }
@@ -54,7 +52,7 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     public Project create(ProjectDTO dto) throws ApiException {
         var project = makeEntity(dto);
         var saved = projectRepository.save(project);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.CREATE, ActionType.WORK, projectMapper.toDTO(saved));
+        publish(saved, EventWebSocketDTO.Type.CREATE);
         return saved;
     }
 
@@ -68,7 +66,7 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
             project.setObjectNumber(generateUniqueObjectNumber());
         }
         var updated = projectRepository.save(project);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.UPDATE, ActionType.WORK, projectMapper.toDTO(updated));
+        publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
     }
 
@@ -76,8 +74,18 @@ public class ProjectService extends BaseService<Project, ProjectDTO> {
     @Override
     public void delete(UUID id) throws ApiException {
         var project = projectRepository.findByIdOrElseThrow(id);
-        eventPublisher.publish("project", EventWebSocketDTO.Type.DELETE, ActionType.WORK, projectMapper.toDTO(project));
+        publish(project, EventWebSocketDTO.Type.DELETE);
         projectRepository.delete(project);
+    }
+
+    private void publish(Project project, EventWebSocketDTO.Type type) throws ApiException {
+        eventPublisher.publish(
+                "project",
+                type,
+                ActionType.WORK,
+                projectMapper.toDTO(project),
+                Map.of("projectId", project.getId())
+        );
     }
 
     private String generateUniqueObjectNumber() {

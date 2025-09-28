@@ -145,7 +145,7 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
                 type,
                 ActionType.WORK,
                 workMapper.toDTO(work),
-                Map.of("name", work.getName())
+                Map.of("name", work.getName(), "projectId", work.getProject().getId())
         );
     }
 }

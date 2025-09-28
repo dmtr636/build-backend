@@ -110,7 +110,7 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
                 type,
                 ActionType.WORK,
                 commentMapper.toDTO(comment),
-                Map.of("workId", comment.getWork().getId().toString())
+                Map.of("workId", comment.getWork().getId().toString(), "projectId", comment.getWork().getProject().getId())
         );
     }
 }

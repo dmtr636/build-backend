@@ -6,6 +6,7 @@ import com.kydas.build.checklists.dto.ChecklistSectionDTO;
 import com.kydas.build.checklists.dto.ChecklistSubmitDTO;
 import com.kydas.build.checklists.enums.ChecklistFormType;
 import com.kydas.build.core.endpoints.Endpoints;
+import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.core.exceptions.classes.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +38,7 @@ public class ChecklistController {
             @PathVariable UUID projectId,
             @RequestParam ChecklistFormType type,
             @RequestBody List<ChecklistItemAnswerDTO> answers
-    ) throws NotFoundException {
+    ) throws ApiException {
         return service.createChecklistInstance(projectId, type, answers);
     }
 
@@ -53,7 +54,7 @@ public class ChecklistController {
     public ChecklistInstanceDTO submitAnswers(
             @PathVariable UUID projectId,
             @RequestBody ChecklistSubmitDTO submitDTO
-    ) throws NotFoundException {
+    ) throws ApiException {
         return service.submitAnswers(projectId, submitDTO);
     }
 }

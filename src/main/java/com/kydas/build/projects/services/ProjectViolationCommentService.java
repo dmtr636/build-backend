@@ -111,7 +111,7 @@ public class ProjectViolationCommentService extends BaseService<ProjectViolation
                 type,
                 ActionType.WORK,
                 commentMapper.toDTO(comment),
-                Map.of("violationId", comment.getViolation().getId().toString())
+                Map.of("violationId", comment.getViolation().getId().toString(), "projectId", comment.getViolation().getProject().getId())
         );
     }
 }
