@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kydas.build.core.crud.BaseDTO;
 import com.kydas.build.core.utils.DateUtils;
+import com.kydas.build.dictionaries.documents.NormativeDocumentDTO;
 import com.kydas.build.files.FileDTO;
 import com.kydas.build.projects.dto.enums.ProjectViolationStatus;
 import com.kydas.build.users.UserDTO;
@@ -41,6 +42,7 @@ public class ProjectViolationDTO extends BaseDTO {
     private UserDTO assignee;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private UUID visitId;
+    private List<NormativeDocumentDTO> normativeDocuments = new ArrayList<>();
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonFormat(pattern = DateUtils.ISO_DATE_TIME_FORMAT, timezone = "UTC")
     private Instant createdAt;
