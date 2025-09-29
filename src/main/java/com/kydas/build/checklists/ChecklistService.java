@@ -41,9 +41,9 @@ public class ChecklistService {
     private final EventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
-    public List<ChecklistInstanceDTO> getChecklistsByType(UUID projectId, ChecklistFormType type) throws NotFoundException {
+    public List<ChecklistInstanceDTO> getChecklistsByType(UUID projectId, ChecklistFormType type) throws ApiException {
         var project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("Project not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Project not found"));
 
         List<ChecklistInstance> instances;
         if (type == ChecklistFormType.OPENING) {
@@ -62,9 +62,9 @@ public class ChecklistService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChecklistSectionDTO> getChecklistTemplateByType(ChecklistFormType type) throws NotFoundException {
+    public List<ChecklistSectionDTO> getChecklistTemplateByType(ChecklistFormType type) throws ApiException {
         var template = checklistTemplateRepository.findByType(type)
-                .orElseThrow(() -> new NotFoundException("Checklist template not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Checklist template not found"));
 
         return template.getSections().stream()
                 .map(section -> {
@@ -88,10 +88,10 @@ public class ChecklistService {
     @Transactional
     public ChecklistInstanceDTO createChecklistInstance(UUID projectId, ChecklistFormType type, List<ChecklistItemAnswerDTO> answers) throws ApiException {
         var project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("Project not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Project not found"));
 
         var template = checklistTemplateRepository.findByType(type)
-                .orElseThrow(() -> new NotFoundException("Checklist template not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Checklist template not found"));
 
         var instance = new ChecklistInstance();
         instance.setProject(project);
@@ -133,10 +133,10 @@ public class ChecklistService {
     @Transactional
     public ChecklistInstanceDTO submitAnswers(UUID projectId, ChecklistSubmitDTO submitDTO) throws ApiException {
         projectRepository.findById(projectId)
-                .orElseThrow(() -> new NotFoundException("Project not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Project not found"));
 
         var instance = checklistInstanceRepository.findById(submitDTO.getChecklistInstanceId())
-                .orElseThrow(() -> new NotFoundException("Checklist instance not found"));
+                .orElseThrow(() -> new NotFoundException().setMessage("Checklist instance not found"));
 
         for (var answerDTO : submitDTO.getAnswers()) {
             var answer = instance.getAnswers().stream()
