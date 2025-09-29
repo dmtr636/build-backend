@@ -5,6 +5,8 @@ import com.kydas.build.core.exceptions.classes.ApiException;
 import com.kydas.build.events.ActionType;
 import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
+import com.kydas.build.notifications.NotificationService;
+import com.kydas.build.notifications.NotificationType;
 import com.kydas.build.projects.dto.ProjectWorkDTO;
 import com.kydas.build.projects.entities.ProjectWork;
 import com.kydas.build.projects.entities.ProjectWorkStage;
@@ -29,13 +31,16 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
     private final ProjectWorkStageMapper stageMapper;
     private final ProjectVisitService visitService;
     private final ProjectWorkVersionService versionService;
+    private final NotificationService notificationService;
     private final EventPublisher eventPublisher;
 
     public ProjectWorkService(ProjectWorkRepository workRepository,
                               ProjectRepository projectRepository,
                               ProjectWorkMapper workMapper,
                               ProjectWorkStageMapper stageMapper,
-                              ProjectVisitService visitService, ProjectWorkVersionService versionService,
+                              ProjectVisitService visitService,
+                              ProjectWorkVersionService versionService,
+                              NotificationService notificationService,
                               EventPublisher eventPublisher) {
         super(ProjectWork.class);
         this.workRepository = workRepository;
@@ -44,6 +49,7 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         this.stageMapper = stageMapper;
         this.visitService = visitService;
         this.versionService = versionService;
+        this.notificationService = notificationService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -78,7 +84,16 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         workMapper.update(work, dto);
         setStages(work, dto);
         updateCompletionPercent(work);
-        return saveAndPublish(work, EventWebSocketDTO.Type.UPDATE);
+        var updated = saveAndPublish(work, EventWebSocketDTO.Type.UPDATE);
+        if (!updated.getStatus().equals(work.getStatus())) {
+            notificationService.create(
+                    updated.getProject(),
+                    NotificationType.WORK_STATUS_UPDATE,
+                    updated.getId(),
+                    work.getName()
+            );
+        }
+        return updated;
     }
 
     @Transactional
@@ -98,6 +113,7 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
     @Transactional
     public ProjectWorkDTO changeStatus(UUID workId, UUID visitId, String newStatus) throws ApiException {
         var work = workRepository.findByIdOrElseThrow(workId);
+        var oldStatus = work.getStatus();
 
         work.setStatus(newStatus);
         updateCompletionPercent(work);
@@ -107,6 +123,14 @@ public class ProjectWorkService extends BaseService<ProjectWork, ProjectWorkDTO>
         }
 
         var updated = workRepository.save(work);
+        if (!newStatus.equals(oldStatus)) {
+            notificationService.create(
+                    updated.getProject(),
+                    NotificationType.WORK_STATUS_UPDATE,
+                    updated.getId(),
+                    updated.getName()
+            );
+        }
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return workMapper.toDTO(updated);
     }

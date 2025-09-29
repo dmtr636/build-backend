@@ -8,6 +8,8 @@ import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.files.FileDTO;
 import com.kydas.build.files.FileRepository;
+import com.kydas.build.notifications.NotificationService;
+import com.kydas.build.notifications.NotificationType;
 import com.kydas.build.projects.dto.ProjectViolationCommentDTO;
 import com.kydas.build.projects.entities.ProjectViolationComment;
 import com.kydas.build.projects.mappers.ProjectViolationCommentMapper;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 @Service
 public class ProjectViolationCommentService extends BaseService<ProjectViolationComment, ProjectViolationCommentDTO> {
 
@@ -31,13 +32,15 @@ public class ProjectViolationCommentService extends BaseService<ProjectViolation
     private final EventPublisher eventPublisher;
     private final SecurityContext securityContext;
     private final FileRepository fileRepository;
+    private final NotificationService notificationService;
 
     public ProjectViolationCommentService(ProjectViolationCommentRepository commentRepository,
                                           ProjectViolationRepository violationRepository,
                                           ProjectViolationCommentMapper commentMapper,
                                           EventPublisher eventPublisher,
                                           SecurityContext securityContext,
-                                          FileRepository fileRepository) {
+                                          FileRepository fileRepository,
+                                          NotificationService notificationService) {
         super(ProjectViolationComment.class);
         this.commentRepository = commentRepository;
         this.violationRepository = violationRepository;
@@ -45,6 +48,7 @@ public class ProjectViolationCommentService extends BaseService<ProjectViolation
         this.eventPublisher = eventPublisher;
         this.securityContext = securityContext;
         this.fileRepository = fileRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -61,7 +65,15 @@ public class ProjectViolationCommentService extends BaseService<ProjectViolation
         comment.setViolation(violation);
         comment.setAuthor(securityContext.getCurrentUser());
         updateFiles(comment, dto.getFiles());
-        return saveAndPublish(comment, EventWebSocketDTO.Type.CREATE);
+        var saved = saveAndPublish(comment, EventWebSocketDTO.Type.CREATE);
+        notificationService.create(
+                saved.getViolation().getProject(),
+                NotificationType.VIOLATION_COMMENT,
+                saved.getId(),
+                saved.getText(),
+                saved.getAuthor()
+        );
+        return saved;
     }
 
     @Transactional
@@ -115,4 +127,3 @@ public class ProjectViolationCommentService extends BaseService<ProjectViolation
         );
     }
 }
-

@@ -8,6 +8,8 @@ import com.kydas.build.events.EventPublisher;
 import com.kydas.build.events.EventWebSocketDTO;
 import com.kydas.build.files.FileDTO;
 import com.kydas.build.files.FileRepository;
+import com.kydas.build.notifications.NotificationService;
+import com.kydas.build.notifications.NotificationType;
 import com.kydas.build.projects.dto.ProjectWorkCommentDTO;
 import com.kydas.build.projects.entities.ProjectWorkComment;
 import com.kydas.build.projects.mappers.ProjectWorkCommentMapper;
@@ -30,13 +32,15 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
     private final EventPublisher eventPublisher;
     private final SecurityContext securityContext;
     private final FileRepository fileRepository;
+    private final NotificationService notificationService;
 
     public ProjectWorkCommentService(ProjectWorkCommentRepository commentRepository,
                                      ProjectWorkRepository workRepository,
                                      ProjectWorkCommentMapper commentMapper,
                                      EventPublisher eventPublisher,
                                      SecurityContext securityContext,
-                                     FileRepository fileRepository) {
+                                     FileRepository fileRepository,
+                                     NotificationService notificationService) {
         super(ProjectWorkComment.class);
         this.commentRepository = commentRepository;
         this.workRepository = workRepository;
@@ -44,6 +48,7 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
         this.eventPublisher = eventPublisher;
         this.securityContext = securityContext;
         this.fileRepository = fileRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -60,7 +65,15 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
         comment.setWork(work);
         comment.setAuthor(securityContext.getCurrentUser());
         updateFiles(comment, dto.getFiles());
-        return saveAndPublish(comment, EventWebSocketDTO.Type.CREATE);
+        var saved = saveAndPublish(comment, EventWebSocketDTO.Type.CREATE);
+        notificationService.create(
+                saved.getWork().getProject(),
+                NotificationType.WORK_COMMENT,
+                saved.getId(),
+                saved.getText(),
+                saved.getAuthor()
+        );
+        return saved;
     }
 
     @Transactional
@@ -86,7 +99,7 @@ public class ProjectWorkCommentService extends BaseService<ProjectWorkComment, P
                 .toList();
     }
 
-    private void updateFiles(ProjectWorkComment comment,  List<FileDTO> fileDTOs) {
+    private void updateFiles(ProjectWorkComment comment, List<FileDTO> fileDTOs) {
         if (fileDTOs != null) {
             var files = fileDTOs.stream()
                     .map(FileDTO::getId)
