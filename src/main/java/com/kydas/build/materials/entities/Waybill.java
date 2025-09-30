@@ -3,6 +3,7 @@ package com.kydas.build.materials.entities;
 import com.kydas.build.core.crud.BaseEntity;
 import com.kydas.build.files.File;
 import com.kydas.build.projects.entities.ProjectWork;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -47,6 +48,9 @@ public class Waybill extends BaseEntity {
     private Double grossWeight;
 
     private Integer packageCount;
+
+    @Column(name = "laboratory_analysis_required", nullable = false)
+    private Boolean laboratoryAnalysisRequired = false;
 
     @OneToMany
     @JoinTable(
