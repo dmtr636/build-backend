@@ -22,6 +22,9 @@ public class Endpoints {
     public static final String PROJECTS_VISITS = PROJECTS + "/visits";
     public static final String PROJECTS_WORK_VERSIONS = PROJECTS_WORKS + "/versions";
     public static final String PROJECTS_CHECKLISTS = PROJECTS + "/checklists";
+    public static final String PROJECTS_MATERIALS = PROJECTS + "/materials";
+    public static final String PROJECTS_MATERIALS_WAYBILLS = PROJECTS_MATERIALS + "/waybills";
+    public static final String PROJECTS_MATERIALS_PASSPORT_QUALITIES = PROJECTS_MATERIALS + "/passport-qualities";
 
     public static final String NOTIFICATIONS = "/api/notifications";
 }
