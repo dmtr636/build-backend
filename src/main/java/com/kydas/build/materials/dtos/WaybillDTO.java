@@ -29,6 +29,7 @@ public class WaybillDTO extends BaseDTO {
     private Double netWeight;
     private Double grossWeight;
     private Integer packageCount;
+    private boolean laboratoryAnalysisRequired;
     private List<FileDTO> files = new ArrayList<>();
     private List<FileDTO> images = new ArrayList<>();
 }
