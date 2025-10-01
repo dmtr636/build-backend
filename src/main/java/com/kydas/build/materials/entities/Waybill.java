@@ -41,11 +41,11 @@ public class Waybill extends BaseEntity {
 
     private String invoiceNumber;
 
-    private Double volume;
+    private String volume;
 
-    private Double netWeight;
+    private String netWeight;
 
-    private Double grossWeight;
+    private String grossWeight;
 
     private Integer packageCount;
 

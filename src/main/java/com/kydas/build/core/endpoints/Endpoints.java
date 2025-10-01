@@ -7,6 +7,8 @@ public class Endpoints {
     public static final String ACCOUNT_ENDPOINT = "/api/account";
     public static final String AUTH_ENDPOINT = "/api/auth";
     public static final String FILES_ENDPOINT = "/api/files";
+    public static final String NOTIFICATIONS = "/api/notifications";
+    public static final String OCR = "/api/ocr";
 
     public static final String DICTIONARIES = "/api/dictionaries";
     public static final String CONSTRUCTION_VIOLATIONS = DICTIONARIES + "/construction-violations";
@@ -26,5 +28,4 @@ public class Endpoints {
     public static final String PROJECTS_MATERIALS_WAYBILLS = PROJECTS_MATERIALS + "/waybills";
     public static final String PROJECTS_MATERIALS_PASSPORT_QUALITIES = PROJECTS_MATERIALS + "/passport-qualities";
 
-    public static final String NOTIFICATIONS = "/api/notifications";
 }
