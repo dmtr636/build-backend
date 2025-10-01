@@ -1,0 +1,75 @@
+package com.kydas.build.cv;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+@Service
+public class OcrService {
+
+    private final OcrServiceRestTemplate ocrRestTemplate;
+
+    public OcrService(OcrServiceRestTemplate ocrRestTemplate) {
+        this.ocrRestTemplate = ocrRestTemplate;
+    }
+
+    public OcrResponse processFile(MultipartFile file) throws IOException {
+        byte[] pdfBytes;
+
+        if ("application/pdf".equals(file.getContentType())) {
+            pdfBytes = file.getBytes();
+        } else {
+            pdfBytes = convertToPdf(file);
+        }
+
+        return ocrRestTemplate.doOcr(pdfBytes);
+    }
+
+    private byte[] convertToPdf(MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+
+        if ("application/pdf".equals(contentType)) {
+            return file.getBytes();
+        }
+
+        try (PDDocument doc = new PDDocument()) {
+            PDPage page = new PDPage();
+            doc.addPage(page);
+
+            PDPageContentStream contentStream = new PDPageContentStream(doc, page);
+
+            if (contentType != null && (contentType.equals("image/png") || contentType.equals("image/jpeg"))) {
+                PDImageXObject image = PDImageXObject.createFromByteArray(doc, file.getBytes(), file.getOriginalFilename());
+
+                float pageWidth = page.getMediaBox().getWidth() - 50;
+                float pageHeight = page.getMediaBox().getHeight() - 50;
+                float scale = Math.min(pageWidth / image.getWidth(), pageHeight / image.getHeight());
+
+                float imgWidth = image.getWidth() * scale;
+                float imgHeight = image.getHeight() * scale;
+
+                contentStream.drawImage(image, 25, page.getMediaBox().getHeight() - imgHeight - 25, imgWidth, imgHeight);
+            } else {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.HELVETICA, 12);
+                contentStream.newLineAtOffset(50, 700);
+                contentStream.showText("File: " + file.getOriginalFilename() + " (cannot render preview)");
+                contentStream.endText();
+            }
+
+            contentStream.close();
+
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                doc.save(out);
+                return out.toByteArray();
+            }
+        }
+    }
+}
