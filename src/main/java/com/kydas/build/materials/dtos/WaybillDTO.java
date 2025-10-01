@@ -25,9 +25,9 @@ public class WaybillDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String projectWorkName;
     private String invoiceNumber;
-    private Double volume;
-    private Double netWeight;
-    private Double grossWeight;
+    private String volume;
+    private String netWeight;
+    private String grossWeight;
     private Integer packageCount;
     private boolean laboratoryAnalysisRequired;
     private List<FileDTO> files = new ArrayList<>();

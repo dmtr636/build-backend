@@ -11,6 +11,7 @@ import java.util.TimeZone;
 @EnableAsync
 @SpringBootApplication
 @EnableScheduling
+//@EnableFeignClients
 public class BuildApplication {
 	public static void main(String[] args) {
 		Unirest.config().cookieSpec("standard");

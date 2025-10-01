@@ -51,6 +51,8 @@ dependencies {
 	implementation("org.sejda.imageio:webp-imageio:0.1.6")
 	implementation("com.bucket4j:bucket4j-core:8.10.1")
 	implementation("commons-net:commons-net:3.11.1")
+    implementation("org.apache.pdfbox:pdfbox:2.0.30")
+    implementation("org.apache.commons:commons-text:1.10.0")
 	runtimeOnly("org.postgresql:postgresql:42.7.4")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:3.3.5")
 	annotationProcessor("org.projectlombok:lombok")
