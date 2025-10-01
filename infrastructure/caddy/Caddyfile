@@ -1,4 +1,4 @@
-api.dev.build.kydas.ru {
+localhost {
     reverse_proxy app:8080 {
         header_up Host {host}
         header_up X-Forwarded-For {remote}
@@ -36,17 +36,3 @@ api.dev.build.kydas.ru {
     encode zstd gzip
 }
 
-dev.build.kydas.ru {
-    root * /srv/cdn/frontend-dev/admin/dist
-    file_server
-
-    @assets path /assets/*
-    header @assets Cache-Control "public, max-age=2592000, immutable"
-
-    route {
-        try_files {path} /index.html
-        header /index.html Cache-Control "public, max-age=0, must-revalidate"
-    }
-
-    encode zstd gzip
-}
