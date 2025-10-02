@@ -1,5 +1,6 @@
 package com.kydas.build.cv;
 
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class OcrService {
@@ -24,12 +26,30 @@ public class OcrService {
         byte[] pdfBytes;
 
         if ("application/pdf".equals(file.getContentType())) {
-            pdfBytes = file.getBytes();
+            pdfBytes = extractFirstPage(file.getBytes());
         } else {
             pdfBytes = convertToPdf(file);
+            pdfBytes = extractFirstPage(pdfBytes);
         }
 
         return ocrRestTemplate.doOcr(pdfBytes);
+    }
+
+    private byte[] extractFirstPage(byte[] pdfBytes) throws IOException {
+        try (PDDocument document = PDDocument.load(pdfBytes)) {
+            Splitter splitter = new Splitter();
+            splitter.setStartPage(1);
+            splitter.setEndPage(1);
+            splitter.setSplitAtPage(1);
+
+            List<PDDocument> pages = splitter.split(document);
+
+            try (PDDocument firstPage = pages.get(0);
+                 ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                firstPage.save(baos);
+                return baos.toByteArray();
+            }
+        }
     }
 
     private byte[] convertToPdf(MultipartFile file) throws IOException {
