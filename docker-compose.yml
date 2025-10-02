@@ -48,7 +48,7 @@ services:
 
   ocr-api:
     build:
-      context: ../ocr-service
+      context: ./ocr-service
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
