@@ -64,7 +64,7 @@ public class UserService extends BaseService<User, UserDTO> {
                             Ваш аккаунт был создан на платформе build.kydas.ru.
                             Ваш пароль: %s
                             
-                            Ссылка для входа: https://dev.build.kydas.ru/
+                            Ссылка для входа: https://build.kydas.ru/
                             
                             С уважением,
                             команда Kydas
