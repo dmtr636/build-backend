@@ -307,20 +307,6 @@ public class WaybillFieldExtractor {
         return m.find() ? m.group(1) : s.trim();
     }
 
-    static String squeeze(String s) {
-        return s.replaceAll("\\s{2,}", " ").trim();
-    }
-
-    static Double toNumber(String s) {
-        if (s == null) return null;
-        String n = s.replace(" ", "").replace(" ", "").replace(",", ".");
-        try {
-            return Double.parseDouble(n);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     static String truncate(String s, int n) {
         return s.length() <= n ? s : s.substring(0, n) + "…";
     }
