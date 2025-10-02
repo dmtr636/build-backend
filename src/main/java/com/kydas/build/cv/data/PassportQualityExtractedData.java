@@ -1,5 +1,7 @@
 package com.kydas.build.cv.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kydas.build.core.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +16,7 @@ public class PassportQualityExtractedData {
     private String productNameAndGrade;
     private String batchNumber;
     private Integer batchCount;
+    @JsonFormat(pattern = DateUtils.ISO_DATE_FORMAT, timezone = "UTC")
     private LocalDate manufactureDate;
     private Integer shippedQuantity;
     private String labChief;

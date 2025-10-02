@@ -1,5 +1,7 @@
 package com.kydas.build.projects.dto.components;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.kydas.build.core.utils.DateUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ public class ProjectWorkStageDTO {
     private String name;
     private Integer orderNumber;
     private String status;
+    @JsonFormat(pattern = DateUtils.ISO_DATE_FORMAT, timezone = "UTC")
     private LocalDate date;
 }
 

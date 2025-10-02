@@ -50,3 +50,18 @@ api.{$DOMAIN} {
 
     encode zstd gzip
 }
+
+m.dev.build.kydas.ru {
+    root * /srv/cdn/frontend-dev-m/admin/dist
+    file_server
+
+    @assets path /assets/*
+    header @assets Cache-Control "public, max-age=2592000, immutable"
+
+    route {
+        try_files {path} /index.html
+        header /index.html Cache-Control "public, max-age=0, must-revalidate"
+    }
+
+    encode zstd gzip
+}
