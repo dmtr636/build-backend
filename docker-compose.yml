@@ -11,6 +11,7 @@ services:
       - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db/build
+      - OCR_SERVICE_URL=http://ocr-api:8000
     volumes:
       - ./logs:/app/logs
       - ./cdn:/app/cdn
@@ -44,6 +45,14 @@ services:
       - PGUSER=${POSTGRES_USER}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  ocr-api:
+    build:
+      context: ../ocr-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
 
 volumes:
   cdn:
