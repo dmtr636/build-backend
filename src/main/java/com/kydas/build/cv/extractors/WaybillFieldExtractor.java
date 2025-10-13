@@ -22,7 +22,7 @@ public class WaybillFieldExtractor {
         WaybillExtractedData data = new WaybillExtractedData();
 
         data.setInvoiceNumber(extractInvoiceNumber(text, Field.INVOICE));
-        data.setMaterialName(extractAfterLabel(text, Field.MATERIAL));
+        data.setMaterialName(extractMaterialName(text, Field.MATERIAL));
         data.setVolume(extractPattern(PAT_VOLUME, text));
         data.setNetWeight(extractPattern(PAT_NETTO, text));
         data.setGrossWeight(extractPattern(PAT_BRUTTO, text));
@@ -47,14 +47,45 @@ public class WaybillFieldExtractor {
         String afterLabel = extractAfterLabel(text, field);
         if (afterLabel == null) return null;
 
-        afterLabel = afterLabel.replaceAll("\\s+", ""); // убираем пробелы
+        afterLabel = afterLabel.replaceAll("\\s+", "");
 
         Matcher m = PAT_INVOICE.matcher(afterLabel);
         if (m.find()) {
-            if (m.group(2) != null) {
-                return m.group(1) + "/" + m.group(2);
+            String number = m.group(1);
+            String suffix = m.group(2);
+
+            if ("5".equals(suffix) || "6".equals(suffix)) {
+                suffix = "Б";
+            }
+
+            if (suffix != null) {
+                return number + "/" + suffix;
             } else {
-                return m.group(1);
+                return number;
+            }
+        }
+        return null;
+    }
+
+    private static String extractMaterialName(String text, Field field) {
+        for (String label : LABELS.getOrDefault(field, List.of())) {
+            int idx = text.toLowerCase(Locale.ROOT).indexOf(label.toLowerCase(Locale.ROOT));
+            if (idx >= 0) {
+                String tail = text.substring(idx + label.length()).trim();
+
+                int endIdx = tail.indexOf('\n');
+                for (String pkgLabel : LABELS.get(Field.PACKAGES)) {
+                    int pkgIdx = tail.toLowerCase(Locale.ROOT).indexOf(pkgLabel.toLowerCase(Locale.ROOT));
+                    if (pkgIdx >= 0 && (endIdx < 0 || pkgIdx < endIdx)) {
+                        endIdx = pkgIdx;
+                    }
+                }
+
+                if (endIdx > 0) {
+                    return tail.substring(0, endIdx).trim();
+                } else {
+                    return tail.trim();
+                }
             }
         }
         return null;
