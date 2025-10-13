@@ -62,7 +62,7 @@ _latin_re = re.compile(r"[A-Za-z]")
 _digit_re = re.compile(r"[0-9]")
 _bad_re = re.compile(r"[�]")
 _CLEAN_CONTROL_RE = re.compile(r"[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F]+")
-_CLEAN_DISALLOWED_RE = re.compile(r"[^0-9A-Za-zА-Яа-яЁё .,\-\u2010-\u2015\u2212]+")
+_CLEAN_DISALLOWED_RE = re.compile(r"[^0-9A-Za-zА-Яа-яЁё .,/\-\u2010-\u2015\u2212]+")
 
 def _score_text(text: str) -> float:
     if not text:
@@ -111,6 +111,7 @@ class OcrSimpleOptions:
     whitelist: Optional[str] = None
     blacklist: Optional[str] = None
     preserve_spaces: bool = False
+    preserve_linebreaks: bool = True
     clean: bool = True
     rotate_pages: bool = True
     deskew: bool = True
@@ -294,11 +295,20 @@ def _preprocess_image(img_path: Path, options: OcrSimpleOptions, req_id: str | N
     except Exception:
         return img_path
 
-def _tesseract_page(img_path: Path, languages: str, psm: int, oem: int, timeout_s: int = 120) -> str:
+def _tesseract_page(img_path: Path, languages: str, psm: int, oem: int, timeout_s: int = 120, options: OcrSimpleOptions | None = None) -> str:
     tess = shutil.which("tesseract")
     if not tess:
         return ""
     cmd = [tess, str(img_path), "stdout", "-l", languages, "--oem", str(oem), "--psm", str(psm)]
+
+    if options is not None:
+        if options.whitelist:
+            cmd += ["-c", f"tessedit_char_whitelist={options.whitelist}"]
+        if options.blacklist:
+            cmd += ["-c", f"tessedit_char_blacklist={options.blacklist}"]
+        if options.preserve_spaces or options.preserve_linebreaks:
+            cmd += ["-c", "preserve_interword_spaces=1"]
+
     try:
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout_s)
         out = proc.stdout.decode("utf-8", errors="ignore")
@@ -378,7 +388,7 @@ def _process_page(page_png: Path, languages: str, options: OcrSimpleOptions, req
     oem = 1 if options.oem is None else int(options.oem)
 
     for test_psm in candidate_psms:
-        txt = _tesseract_page(target, languages, test_psm, oem)
+        txt = _tesseract_page(target, languages, test_psm, oem, options=options)
         sc = _score_text(txt)
         if sc > best_score:
             best_txt = txt
@@ -403,13 +413,17 @@ def _post_filter_text(text: str) -> str:
             filtered.append("")
         else:
             blank = False
-            norm = re.sub(r"\s+", " ", line)
+            if getattr(OcrSimpleOptions, "preserve_linebreaks", False):
+                norm = re.sub(r"[ \t]+", " ", line)
+            else:
+                norm = re.sub(r"\s+", " ", line)
             filtered.append(norm)
     while filtered and not filtered[0]:
         filtered.pop(0)
     while filtered and not filtered[-1]:
         filtered.pop()
     return "\n".join(filtered)
+
 
 def _remove_gibberish(text: str) -> str:
     if not text:
@@ -571,6 +585,16 @@ def ocr_pdf_bytes_to_text(data: bytes, options: OcrSimpleOptions, req_id: str | 
     _ensure_ghostscript(); _ensure_tesseract()
     if req_id:
         logger.info(f"[{req_id}] Running FAST_TEXT_ONLY raster+tesseract pipeline (dpi={RAW_RASTER_DPI})")
+
+    if not options.whitelist:
+        options.whitelist = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" \
+                            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" \
+                            "0123456789-–—.,/()_:;\"'№ "
+
+    if not options.blacklist:
+        options.blacklist = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+
+
     raw_text, raw_score = _raw_raster_tesseract_pipeline(input_path, options.languages, options, req_id, logger)
 
     if POSTFILTER_ENABLED:
@@ -587,7 +611,10 @@ def ocr_pdf_bytes_to_text(data: bytes, options: OcrSimpleOptions, req_id: str | 
     except Exception:
         pass
 
-    cleaned_text = _final_clean_text(raw_text, aggressive=options.clean)
+    cleaned_text = _final_clean_text(
+        raw_text,
+        aggressive=(options.clean and not options.preserve_linebreaks)
+    )
     try:
         cleaned_text = _apply_manual_fixes(cleaned_text)
     except Exception:
