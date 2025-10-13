@@ -2,6 +2,7 @@ package com.kydas.build.cv;
 
 
 import com.kydas.build.core.endpoints.Endpoints;
+import com.kydas.build.cv.data.WaybillExtractedData;
 import com.kydas.build.cv.extractors.PassportQualityFieldExtractor;
 import com.kydas.build.cv.extractors.WaybillFieldExtractor;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class CvController {
     private final OcrService ocrService;
 
     @PostMapping("/waybills")
-    public WaybillFieldExtractor.Result extractWaybill(@RequestParam("file") MultipartFile file) throws IOException {
+    public WaybillExtractedData extractWaybill(@RequestParam("file") MultipartFile file) throws IOException {
         return WaybillFieldExtractor.extract(ocrService.processFile(file).text());
     }
 
