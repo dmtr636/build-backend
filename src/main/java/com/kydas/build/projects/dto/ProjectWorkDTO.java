@@ -1,6 +1,7 @@
 package com.kydas.build.projects.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kydas.build.materials.dtos.WaybillDTO;
 import com.kydas.build.projects.dto.components.CoordinateDTO;
 import com.kydas.build.projects.dto.components.ProjectWorkStageDTO;
 import com.kydas.build.projects.dto.components.ProjectWorkVersionDTO;
@@ -29,5 +30,6 @@ public class ProjectWorkDTO {
     private String volumeUnit;
     private CoordinateDTO centroid;
     private List<ProjectWorkStageDTO> stages = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<WaybillDTO> waybills = new ArrayList<>();
 }
-

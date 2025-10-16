@@ -2,6 +2,7 @@ package com.kydas.build.projects.entities;
 
 import com.kydas.build.core.crud.BaseEntity;
 import com.kydas.build.projects.entities.embeddable.Coordinate;
+import com.kydas.build.materials.entities.Waybill;
 import com.kydas.build.projects.entities.embeddable.WorkVolume;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -72,6 +73,9 @@ public class ProjectWork extends BaseEntity {
 
     @ManyToMany(mappedBy = "works")
     private List<ProjectVisit> visits = new ArrayList<>();
+
+    @OneToMany(mappedBy = "projectWork", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Waybill> waybills = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
