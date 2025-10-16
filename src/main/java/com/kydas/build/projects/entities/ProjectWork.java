@@ -1,6 +1,8 @@
 package com.kydas.build.projects.entities;
 
 import com.kydas.build.core.crud.BaseEntity;
+import com.kydas.build.projects.entities.embeddable.Coordinate;
+import com.kydas.build.materials.entities.Waybill;
 import com.kydas.build.projects.entities.embeddable.WorkVolume;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -54,6 +56,13 @@ public class ProjectWork extends BaseEntity {
     @Column(nullable = false)
     private Integer completionPercent = 0;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "latitude", column = @Column(name = "centroid_latitude")),
+            @AttributeOverride(name = "longitude", column = @Column(name = "centroid_longitude"))
+    })
+    private Coordinate centroid;
+
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderNumber ASC")
     private List<ProjectWorkStage> stages = new ArrayList<>();
@@ -64,6 +73,9 @@ public class ProjectWork extends BaseEntity {
 
     @ManyToMany(mappedBy = "works")
     private List<ProjectVisit> visits = new ArrayList<>();
+
+    @OneToMany(mappedBy = "projectWork", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Waybill> waybills = new ArrayList<>();
 
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL)
     private List<ProjectViolation> violations = new ArrayList<>();
