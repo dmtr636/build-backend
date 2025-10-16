@@ -18,6 +18,7 @@ import com.kydas.build.projects.entities.ProjectViolation;
 import com.kydas.build.projects.mappers.ProjectViolationMapper;
 import com.kydas.build.projects.repositories.ProjectRepository;
 import com.kydas.build.projects.repositories.ProjectViolationRepository;
+import com.kydas.build.projects.repositories.ProjectWorkRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
 
     private final ProjectViolationRepository violationRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectWorkRepository workRepository;
     private final ProjectViolationMapper violationMapper;
     private final ProjectVisitService projectVisitService;
     private final NormativeDocumentService documentService;
@@ -41,7 +43,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
     private final NotificationService notificationService;
 
     public ProjectViolationService(ProjectViolationRepository violationRepository,
-                                   ProjectRepository projectRepository,
+                                   ProjectRepository projectRepository, ProjectWorkRepository workRepository,
                                    ProjectViolationMapper violationMapper,
                                    ProjectVisitService projectVisitService,
                                    NormativeDocumentService documentService,
@@ -52,6 +54,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         super(ProjectViolation.class);
         this.violationRepository = violationRepository;
         this.projectRepository = projectRepository;
+        this.workRepository = workRepository;
         this.violationMapper = violationMapper;
         this.projectVisitService = projectVisitService;
         this.documentService = documentService;
@@ -79,6 +82,9 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         var project = projectRepository.findByIdOrElseThrow(dto.getProjectId());
         var violation = makeEntity(dto);
         violation.setProject(project);
+        if (dto.getWorkId() != null) {
+            violation.setWork(workRepository.findByIdOrElseThrow(dto.getWorkId()));
+        }
         var saved = violationRepository.save(violation);
         if (dto.getVisitId() != null) {
             projectVisitService.addViolationToVisit(dto.getVisitId(), saved);
@@ -103,6 +109,7 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violation.setPhotos(getFiles(dto.getPhotos()));
         violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
         violation.setNormativeDocuments(documentService.getNormativeDocuments(dto.getNormativeDocuments()));
+        violation.setWork(workRepository.findByIdOrElseThrow(dto.getWorkId()));
         var updated = violationRepository.save(violation);
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;

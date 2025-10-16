@@ -65,6 +65,9 @@ public class ProjectWork extends BaseEntity {
     @ManyToMany(mappedBy = "works")
     private List<ProjectVisit> visits = new ArrayList<>();
 
+    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL)
+    private List<ProjectViolation> violations = new ArrayList<>();
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

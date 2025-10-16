@@ -27,5 +27,6 @@ public class ProjectWorkDTO {
     private Double actualVolume;
     private String volumeUnit;
     private List<ProjectWorkStageDTO> stages = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<ProjectViolationDTO> violations = new ArrayList<>();
 }
-
