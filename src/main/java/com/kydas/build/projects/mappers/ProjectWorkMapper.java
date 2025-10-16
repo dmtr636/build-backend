@@ -1,6 +1,7 @@
 package com.kydas.build.projects.mappers;
 
 import com.kydas.build.core.crud.BaseMapper;
+import com.kydas.build.materials.mappers.WaybillMapper;
 import com.kydas.build.projects.dto.ProjectWorkDTO;
 import com.kydas.build.projects.entities.ProjectWork;
 import org.mapstruct.Mapper;
@@ -9,7 +10,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {ProjectWorkStageMapper.class, ProjectWorkCommentMapper.class, ProjectWorkVersionMapper.class})
+        uses = {ProjectWorkStageMapper.class, ProjectWorkCommentMapper.class, ProjectWorkVersionMapper.class, WaybillMapper.class})
 public interface ProjectWorkMapper extends BaseMapper<ProjectWork, ProjectWorkDTO> {
 
     @Override
