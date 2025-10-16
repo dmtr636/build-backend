@@ -32,4 +32,6 @@ public class ProjectWorkDTO {
     private List<ProjectWorkStageDTO> stages = new ArrayList<>();
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<WaybillDTO> waybills = new ArrayList<>();
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<ProjectViolationDTO> violations = new ArrayList<>();
 }

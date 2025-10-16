@@ -16,6 +16,7 @@ import org.mapstruct.MappingTarget;
 public interface ProjectViolationMapper extends BaseMapper<ProjectViolation, ProjectViolationDTO> {
     @Override
     @Mapping(target = "projectId", source = "project.id")
+    @Mapping(target = "workId", source = "work.id")
     @Mapping(target = "latitude", source = "coordinate.latitude")
     @Mapping(target = "longitude", source = "coordinate.longitude")
     @Mapping(target = "visitId", ignore = true)

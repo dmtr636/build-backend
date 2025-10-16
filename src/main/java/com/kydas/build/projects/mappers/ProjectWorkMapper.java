@@ -10,7 +10,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {ProjectWorkStageMapper.class, ProjectWorkCommentMapper.class, ProjectWorkVersionMapper.class, WaybillMapper.class})
+        uses = {ProjectWorkStageMapper.class, ProjectWorkCommentMapper.class, ProjectWorkVersionMapper.class, ProjectViolationMapper.class, WaybillMapper.class})
 public interface ProjectWorkMapper extends BaseMapper<ProjectWork, ProjectWorkDTO> {
 
     @Override

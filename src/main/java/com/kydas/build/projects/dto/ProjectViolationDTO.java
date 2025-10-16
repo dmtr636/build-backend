@@ -21,6 +21,7 @@ import java.util.UUID;
 @Setter
 public class ProjectViolationDTO extends BaseDTO {
     private UUID projectId;
+    private UUID workId;
     private String name;
     @JsonFormat(pattern = DateUtils.ISO_DATE_FORMAT, timezone = "UTC")
     private LocalDate dueDate;

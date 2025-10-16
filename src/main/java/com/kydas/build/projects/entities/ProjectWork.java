@@ -77,6 +77,9 @@ public class ProjectWork extends BaseEntity {
     @OneToMany(mappedBy = "projectWork", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Waybill> waybills = new ArrayList<>();
 
+    @OneToMany(mappedBy = "work", cascade = CascadeType.ALL)
+    private List<ProjectViolation> violations = new ArrayList<>();
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
