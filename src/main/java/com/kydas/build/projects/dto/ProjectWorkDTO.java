@@ -1,6 +1,7 @@
 package com.kydas.build.projects.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kydas.build.projects.dto.components.CoordinateDTO;
 import com.kydas.build.projects.dto.components.ProjectWorkStageDTO;
 import com.kydas.build.projects.dto.components.ProjectWorkVersionDTO;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class ProjectWorkDTO {
     private Double plannedVolume;
     private Double actualVolume;
     private String volumeUnit;
+    private CoordinateDTO centroid;
     private List<ProjectWorkStageDTO> stages = new ArrayList<>();
 }
 
