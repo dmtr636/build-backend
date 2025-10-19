@@ -109,7 +109,11 @@ public class ProjectViolationService extends BaseService<ProjectViolation, Proje
         violation.setPhotos(getFiles(dto.getPhotos()));
         violation.setResolutionPhotos(getFiles(dto.getResolutionPhotos()));
         violation.setNormativeDocuments(documentService.getNormativeDocuments(dto.getNormativeDocuments()));
-        violation.setWork(workRepository.findByIdOrElseThrow(dto.getWorkId()));
+        if (dto.getWorkId() != null) {
+            violation.setWork(workRepository.findByIdOrElseThrow(dto.getWorkId()));
+        } else {
+            violation.setWork(null);
+        }
         var updated = violationRepository.save(violation);
         publish(updated, EventWebSocketDTO.Type.UPDATE);
         return updated;
