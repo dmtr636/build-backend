@@ -1,7 +1,11 @@
 package com.kydas.build.cv;
 
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSString;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -46,6 +50,17 @@ public class OcrService {
 
             try (PDDocument firstPage = pages.get(0);
                  ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+                PDDocumentInformation info = new PDDocumentInformation();
+                firstPage.setDocumentInformation(info);
+                firstPage.getDocumentCatalog().setMetadata(null);
+
+                COSArray id = new COSArray();
+                COSString fixed = new COSString("00000000000000000000000000000000");
+                id.add(fixed);
+                id.add(fixed);
+                firstPage.getDocument().getTrailer().setItem(COSName.ID, id);
+
                 firstPage.save(baos);
                 return baos.toByteArray();
             }
